@@ -1,0 +1,229 @@
+[
+  {
+    "id": "abuelo",
+    "quien": "Solomon Muto",
+    "avatar": "solomonmuto",
+    "actos": [
+      1,
+      2
+    ],
+    "titulo": "El consejo del abuelo",
+    "texto": "El abuelo te llama por el comunicador. «Un mazo no se gana con la carta más fuerte, Yugi. Se gana con la que sabes cuándo jugar.»",
+    "opciones": [
+      {
+        "texto": "Escuchar su consejo",
+        "resultado": "El abuelo te manda una carta de su colección.",
+        "efecto": {
+          "cartas": {
+            "rareza": "SR",
+            "n": 1
+          }
+        }
+      },
+      {
+        "texto": "«Ya lo sé, abuelo»",
+        "resultado": "Cuelgas, pero algo se te queda dentro: la próxima recompensa la verás con otros ojos.",
+        "efecto": {
+          "mejorarProxima": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "joey-cambio",
+    "quien": "Joey Wheeler",
+    "avatar": "joeywheeler",
+    "actos": [
+      1,
+      2
+    ],
+    "titulo": "Joey quiere cambiar cromos",
+    "texto": "«Eh, colega. Me sobran cartas y a ti también. ¿Hacemos un cambio a ciegas?»",
+    "opciones": [
+      {
+        "texto": "Cambiar a ciegas",
+        "resultado": "Joey te da dos cartas y se va tan contento.",
+        "efecto": {
+          "cartas": {
+            "rareza": "R",
+            "n": 2
+          }
+        }
+      },
+      {
+        "texto": "Mejor no",
+        "resultado": "Joey se encoge de hombros y sigue su camino.",
+        "efecto": {}
+      }
+    ]
+  },
+  {
+    "id": "cazador",
+    "quien": "Cazador de Raras",
+    "avatar": "marik",
+    "actos": [
+      2,
+      3
+    ],
+    "titulo": "El Cazador de Raras",
+    "texto": "Una figura encapuchada te corta el paso. «Una Star Chip. Solo una. Y te enseño lo que llevo dentro de la gabardina.»",
+    "opciones": [
+      {
+        "texto": "Apostar una ficha",
+        "resultado": "Abre la gabardina.",
+        "efecto": {
+          "apuesta": {
+            "chips": 1,
+            "probabilidad": 0.5
+          }
+        }
+      },
+      {
+        "texto": "Seguir de largo",
+        "resultado": "No te fías, y haces bien.",
+        "efecto": {}
+      }
+    ]
+  },
+  {
+    "id": "weevil",
+    "quien": "Weevil Underwood",
+    "avatar": "weevilunderwood",
+    "actos": [
+      1
+    ],
+    "titulo": "El truco de Weevil",
+    "texto": "Weevil sonríe demasiado. «Te dejo mirar mi caja de cartas. Total, tú no sabrías qué hacer con ellas.»",
+    "opciones": [
+      {
+        "texto": "Mirar la caja",
+        "resultado": "Coges tres cartas antes de que se arrepienta.",
+        "efecto": {
+          "cartas": {
+            "rareza": "R",
+            "n": 3
+          }
+        }
+      },
+      {
+        "texto": "Desconfiar",
+        "resultado": "Weevil se marcha refunfuñando. Habría sido una trampa.",
+        "efecto": {
+          "chips": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "baul",
+    "quien": "Baúl abandonado",
+    "avatar": null,
+    "actos": [
+      1,
+      2,
+      3
+    ],
+    "titulo": "Un baúl abandonado",
+    "texto": "En la playa hay un baúl reventado, lleno de cartas mojadas. La mayoría no valen nada. La mayoría.",
+    "opciones": [
+      {
+        "texto": "Vaciarlo entero",
+        "resultado": "Cuarenta cartas a la mochila. Ya verás qué haces con ellas.",
+        "efecto": {
+          "morralla": 40
+        }
+      },
+      {
+        "texto": "Dejarlo",
+        "resultado": "Pesa demasiado.",
+        "efecto": {}
+      }
+    ]
+  },
+  {
+    "id": "apuesta",
+    "quien": "Duelista anónimo",
+    "avatar": null,
+    "actos": [
+      2,
+      3
+    ],
+    "titulo": "Doble o nada",
+    "texto": "«Dos fichas contra dos. Sin duelo, a una carta. La más alta gana.» Se le ve muy seguro.",
+    "opciones": [
+      {
+        "texto": "Aceptar: dos fichas",
+        "resultado": "Cortáis la baraja.",
+        "efecto": {
+          "apuesta": {
+            "chips": 2,
+            "probabilidad": 0.5
+          }
+        }
+      },
+      {
+        "texto": "No juegas a eso",
+        "resultado": "«Cobarde», dice. Te da igual.",
+        "efecto": {}
+      }
+    ]
+  },
+  {
+    "id": "mai-consejo",
+    "quien": "Mai Valentine",
+    "avatar": "maikujaku",
+    "actos": [
+      2
+    ],
+    "titulo": "Mai se aburre",
+    "texto": "«¿Sabes cuál es tu problema? Que juegas lo que te sale, no lo que necesitas. Toma, quédate esto y piénsalo.»",
+    "opciones": [
+      {
+        "texto": "Quedarte la carta",
+        "resultado": "Mai te lanza una carta sin mirarte.",
+        "efecto": {
+          "cartas": {
+            "rareza": "SR",
+            "n": 1
+          }
+        }
+      },
+      {
+        "texto": "Preguntarle por la isla",
+        "resultado": "Te cuenta por dónde no ir. Ganas una ficha de las suyas.",
+        "efecto": {
+          "chips": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "kaiba-desprecio",
+    "quien": "Seto Kaiba",
+    "avatar": "setokaiba",
+    "actos": [
+      3
+    ],
+    "titulo": "Kaiba pasa de largo",
+    "texto": "«¿Tú? ¿En el castillo?» Kaiba ni se para. «Toma. Con eso a lo mejor duras dos turnos contra Pegasus.»",
+    "opciones": [
+      {
+        "texto": "Aceptar la carta",
+        "resultado": "Te tira una carta y sigue andando.",
+        "efecto": {
+          "cartas": {
+            "rareza": "UR",
+            "n": 1
+          }
+        }
+      },
+      {
+        "texto": "«Guárdatela»",
+        "resultado": "Kaiba sonríe de lado. Por una vez, con respeto.",
+        "efecto": {
+          "chips": 1
+        }
+      }
+    ]
+  }
+]

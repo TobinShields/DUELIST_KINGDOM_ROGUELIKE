@@ -1,0 +1,95 @@
+{
+  "_lee_esto": "Cartas del diseño que NO están en el pool legal del simulador (GOAT.lflist.conf de Project Ignis, 1.685 passcodes). Ninguna se cambia en silencio: cada línea dice por qué. Casi todas son vanillas de anime que la whitelist de Ignis no incluye, así que el reemplazo busca el MISMO papel (raza, nivel y stats parecidas) para no tocar la identidad del personaje.",
+  "mystic elf": {
+    "por": "Mystical Elf",
+    "motivo": "errata del brief: la carta se llama Mystical Elf"
+  },
+  "berfomet": {
+    "por": "Gemini Elf",
+    "motivo": "Berfomet no está en el pool y sin él tampoco hay Chimera; se cambia por otra carta clásica de Yugi del mismo nivel de potencia"
+  },
+  "chimera the flying mythical beast": {
+    "por": "Rabid Horseman",
+    "motivo": "la fusión de Gazelle+Berfomet no existe en el pool; Rabid Horseman es una fusión de nivel 6 legal, así que sigue valiendo como objetivo de Metamorphosis"
+  },
+  "gokibore": {
+    "por": "Kuwagata α",
+    "motivo": "insecto vanilla equivalente (1250/1000 nivel 4) para el mazo anime de Weevil"
+  },
+  "sword arm of dragon": {
+    "por": "Kabazauls",
+    "motivo": "el pool solo tiene dos dinosaurios de nivel 5-6 y los dos son demasiado fuertes para un Tier 1; Kabazauls (1700/1500) es el dinosaurio grande que sí existe"
+  },
+  "megazowler": {
+    "por": "Element Saurus",
+    "motivo": "mismo caso: no hay dinosaurios medianos de nivel 6 en el pool, así que se cubre el hueco con otro cuerpo de nivel 4"
+  },
+  "trakodon": {
+    "por": "Mammoth Graveyard",
+    "motivo": "dinosaurio vanilla de nivel 3 casi idéntico (1200/800)"
+  },
+  "kairyu-shin": {
+    "por": "Sea Serpent Warrior of Darkness",
+    "motivo": "mismas estadísticas (1800/1500) y misma raza de serpiente marina"
+  },
+  "fiend kraken": {
+    "por": "Flying Penguin",
+    "motivo": "Aqua vanilla de nivel 4 con estadísticas equivalentes para el mazo anime de Mako"
+  },
+  "battle warrior": {
+    "por": "Armaill",
+    "motivo": "guerrero vanilla de nivel 3 (700/1300) del mismo tramo"
+  },
+  "copycat": {
+    "por": "Garoozis",
+    "motivo": "Copycat no está en el pool; Garoozis es otra carta del Joey del anime y aporta un cuerpo de 1800"
+  },
+  "panther warrior": {
+    "por": "Nin-Ken Dog",
+    "motivo": "no hay Beast-Warrior de nivel 4 con 2000 que no sea de castigo; Nin-Ken Dog (1800) mantiene la raza y el papel de atacante"
+  },
+  "alligator's sword": {
+    "por": "Pale Beast",
+    "motivo": "bestia vanilla de nivel 4 con las mismas estadísticas (1500/1200)"
+  },
+  "kunai with chain": {
+    "por": "Reinforcements",
+    "motivo": "trampa de combate del mismo estilo y de la misma época; Kunai with Chain no está en el pool"
+  },
+  "cyber shield": {
+    "por": "Malevolent Nuzzler",
+    "motivo": "equipo genérico de +700 en lugar del equipo de Harpies, que no está en el pool"
+  },
+  "dark chimera": {
+    "por": "Ryu-Kishin Powered",
+    "motivo": "Fiend de estadísticas parecidas (1600/1200) para la baraja de PaniK"
+  },
+  "metal guardian": {
+    "por": "Wall of Illusion",
+    "motivo": "muro Fiend del pool (1000/1850) que además devuelve al atacante a la mano: mismo papel defensivo"
+  },
+  "barox": {
+    "por": "Reaper on the Nightmare",
+    "motivo": "fusión legal del pool en el mismo hueco del Extra; Barox no está"
+  },
+  "the snake hair": {
+    "por": "Wandering Mummy",
+    "motivo": "zombi de nivel 4 con estadísticas equivalentes (1500/1500)"
+  },
+  "pendulum machine": {
+    "por": "Gadget Soldier",
+    "motivo": "máquina de nivel 6 casi calcada (1800/2000)"
+  },
+  "blast sphere": {
+    "por": "Cannon Soldier",
+    "motivo": "máquina de nivel 4 del pool; además encaja con el Keith del anime"
+  },
+  "dungeon worm": {
+    "por": "Neo Bug",
+    "motivo": "insecto de estadísticas equivalentes (1800/1700)"
+  },
+  "monster tamer": {
+    "por": "Dark Blade",
+    "motivo": "guerrero de nivel 4 con 1800/1500, mismo papel de cuerpo grande"
+  }
+}

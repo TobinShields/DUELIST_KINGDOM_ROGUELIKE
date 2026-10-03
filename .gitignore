@@ -1,0 +1,28 @@
+# De engine/browser/out/ solo se suben las seis piezas que necesita
+# build-html.mjs (motor, scripts Lua y cartas del pool, ~4 MB). El resto son
+# HTML construidos y salidas de pruebas.
+engine/browser/out/*
+!engine/browser/out/ocgcore.bundle.js
+!engine/browser/out/scripts.bundle.js
+!engine/browser/out/cards.subset.json
+!engine/browser/out/names.subset.json
+!engine/browser/out/cardback.js
+!engine/browser/out/deck.json
+engine/deckbuilder/deckbuilder.html
+# Repos de origen: pesan y se descargan aparte.
+BabelCDB-master/
+CardScripts-master/
+ocgcore-wasm-main/
+*.tgz
+# El README enlaza DUELIST_KINGDOM_ROGUELIKE.zip: ese sí se sube.
+*.zip
+!DUELIST_KINGDOM_ROGUELIKE.zip
+# Bases completas: se generan con engine/export_cards.py
+engine/data/full_*.json
+engine/data/cards.json
+engine/data/names.json
+# Mazos personales y logs de partida
+engine/data/mazos-propios.json
+goat-log-*.txt
+goat-copia-*.json
+node_modules/

@@ -1,0 +1,286 @@
+{
+ "generado": "2026-08-15",
+ "mazos": 35,
+ "cartasDistintasResueltas": 299,
+ "faltantes": [],
+ "mazosConProblemas": [
+  {
+   "id": "yugi-starter-a",
+   "problemas": [
+    "sustituida Mystic Elf → Mystical Elf (errata del brief: la carta se llama Mystical Elf)",
+    "parche: Llevaba Polymerization y el Extra Deck VACÍO: una carta muerta desde el primer turno. Se le da su fusión de siempre (Dark Magician + Buster Blader), que además le sirve al mazo: Dark Paladin es un 2900 que gana ATK por cada dragón del rival."
+   ]
+  },
+  {
+   "id": "yugi-starter-b",
+   "problemas": [
+    "sustituida Berfomet → Gemini Elf (Berfomet no está en el pool y sin él tampoco hay Chimera; se cambia por otra carta clásica de Yugi del mismo nivel de potencia)",
+    "sustituida Chimera the Flying Mythical Beast → Rabid Horseman (la fusión de Gazelle+Berfomet no existe en el pool; Rabid Horseman es una fusión de nivel 6 legal, así que sigue valiendo como objetivo de Metamorphosis)"
+   ]
+  },
+  {
+   "id": "weevil-t1",
+   "problemas": [
+    "sustituida Gokibore → Kuwagata α (insecto vanilla equivalente (1250/1000 nivel 4) para el mazo anime de Weevil)"
+   ]
+  },
+  {
+   "id": "rex-t1",
+   "problemas": [
+    "sustituida Sword Arm of Dragon → Kabazauls (el pool solo tiene dos dinosaurios de nivel 5-6 y los dos son demasiado fuertes para un Tier 1; Kabazauls (1700/1500) es el dinosaurio grande que sí existe)",
+    "sustituida Megazowler → Element Saurus (mismo caso: no hay dinosaurios medianos de nivel 6 en el pool, así que se cubre el hueco con otro cuerpo de nivel 4)",
+    "sustituida Trakodon → Mammoth Graveyard (dinosaurio vanilla de nivel 3 casi idéntico (1200/800))"
+   ]
+  },
+  {
+   "id": "mako-t1",
+   "problemas": [
+    "sustituida Kairyu-Shin → Sea Serpent Warrior of Darkness (mismas estadísticas (1800/1500) y misma raza de serpiente marina)",
+    "sustituida Fiend Kraken → Flying Penguin (Aqua vanilla de nivel 4 con estadísticas equivalentes para el mazo anime de Mako)"
+   ]
+  },
+  {
+   "id": "joey-t1",
+   "problemas": [
+    "sustituida Battle Warrior → Armaill (guerrero vanilla de nivel 3 (700/1300) del mismo tramo)",
+    "sustituida Copycat → Garoozis (Copycat no está en el pool; Garoozis es otra carta del Joey del anime y aporta un cuerpo de 1800)",
+    "sustituida Panther Warrior → Nin-Ken Dog (no hay Beast-Warrior de nivel 4 con 2000 que no sea de castigo; Nin-Ken Dog (1800) mantiene la raza y el papel de atacante)",
+    "sustituida Alligator's Sword → Pale Beast (bestia vanilla de nivel 4 con las mismas estadísticas (1500/1200))",
+    "sustituida Kunai with Chain → Reinforcements (trampa de combate del mismo estilo y de la misma época; Kunai with Chain no está en el pool)",
+    "parche: Giltia the D. Knight pedía materiales que el mazo no lleva. Thousand Dragon sí sale (Baby Dragon + Time Wizard), así que se queda solo esa y el hueco va a otra fusión que sí se puede hacer con lo que hay."
+   ]
+  },
+  {
+   "id": "mai-t1",
+   "problemas": [
+    "sustituida Cyber Shield → Malevolent Nuzzler (equipo genérico de +700 en lugar del equipo de Harpies, que no está en el pool)"
+   ]
+  },
+  {
+   "id": "panik-t1",
+   "problemas": [
+    "sustituida Dark Chimera → Ryu-Kishin Powered (Fiend de estadísticas parecidas (1600/1200) para la baraja de PaniK)",
+    "sustituida Metal Guardian → Wall of Illusion (muro Fiend del pool (1000/1850) que además devuelve al atacante a la mano: mismo papel defensivo)",
+    "sustituida Barox → Reaper on the Nightmare (fusión legal del pool en el mismo hueco del Extra; Barox no está)"
+   ]
+  },
+  {
+   "id": "bonz-t1",
+   "problemas": [
+    "sustituida The Snake Hair → Wandering Mummy (zombi de nivel 4 con estadísticas equivalentes (1500/1500))"
+   ]
+  },
+  {
+   "id": "bandit-keith-t1",
+   "problemas": [
+    "sustituida Pendulum Machine → Gadget Soldier (máquina de nivel 6 casi calcada (1800/2000))",
+    "sustituida Blast Sphere → Cannon Soldier (máquina de nivel 4 del pool; además encaja con el Keith del anime)"
+   ]
+  },
+  {
+   "id": "kaiba-t1",
+   "problemas": [
+    "parche: Tenía Rabid Horseman en el Extra pero le faltaba uno de los dos materiales, así que la fusión no se podía hacer nunca. Con Mystic Horseman ya sale con los dos Battle Ox que lleva."
+   ]
+  },
+  {
+   "id": "labyrinth-brothers-t1",
+   "problemas": [
+    "sustituida Dungeon Worm → Neo Bug (insecto de estadísticas equivalentes (1800/1700))",
+    "sustituida Monster Tamer → Dark Blade (guerrero de nivel 4 con 1800/1500, mismo papel de cuerpo grande)",
+    "parche: Polymerization sin una sola fusión posible con lo que lleva el mazo, y sin Extra Deck. En vez de inventarle una fusión que no pega, se cambia por otra Waboku: el mazo es de muro y aguantar es justo lo suyo."
+   ]
+  }
+ ],
+ "tamaños": [
+  {
+   "id": "yugi-starter-a",
+   "main": 40,
+   "extra": 1
+  },
+  {
+   "id": "yugi-starter-b",
+   "main": 40,
+   "extra": 2
+  },
+  {
+   "id": "yugi-starter-c",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "weevil-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "weevil-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "weevil-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "rex-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "rex-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "rex-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "mako-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "mako-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "mako-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "joey-t1",
+   "main": 40,
+   "extra": 1
+  },
+  {
+   "id": "joey-t2",
+   "main": 40,
+   "extra": 4
+  },
+  {
+   "id": "joey-t3",
+   "main": 40,
+   "extra": 8
+  },
+  {
+   "id": "mai-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "mai-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "mai-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "panik-t1",
+   "main": 40,
+   "extra": 1
+  },
+  {
+   "id": "panik-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "panik-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bonz-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bonz-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bonz-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bandit-keith-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bandit-keith-t2",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "bandit-keith-t3",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "kaiba-t1",
+   "main": 40,
+   "extra": 1
+  },
+  {
+   "id": "kaiba-t2",
+   "main": 40,
+   "extra": 6
+  },
+  {
+   "id": "kaiba-t3",
+   "main": 40,
+   "extra": 15
+  },
+  {
+   "id": "labyrinth-brothers-t1",
+   "main": 40,
+   "extra": 0
+  },
+  {
+   "id": "labyrinth-brothers-t2",
+   "main": 40,
+   "extra": 5
+  },
+  {
+   "id": "labyrinth-brothers-t3",
+   "main": 40,
+   "extra": 15
+  },
+  {
+   "id": "pegasus-m0-boss",
+   "main": 40,
+   "extra": 15
+  },
+  {
+   "id": "pegasus-m1-boss",
+   "main": 40,
+   "extra": 15
+  }
+ ],
+ "pools": {
+  "ultra": 14,
+  "super": 29,
+  "rare": 36,
+  "arcane": 27,
+  "warrior": 29,
+  "dragon": 26,
+  "recruit": 30,
+  "forbid": 30,
+  "fusion": 11,
+  "fusionTematica": 6,
+  "maestria": 10
+ },
+ "avisos": []
+}

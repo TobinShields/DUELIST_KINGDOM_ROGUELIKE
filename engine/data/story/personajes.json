@@ -1,0 +1,591 @@
+{
+ "_lee_esto": "Los rivales de la isla. `mazos` apunta a los ids de engine/data/story/decks.json, que salen del brief y están validados contra el pool. `avatar` es una clave de engine/data/avatares.json; null significa que todavía no hay retrato y la interfaz pinta una silueta con el nombre (faltan Pegasus, PaniK y Bonz). `repetible` dice si el personaje puede volver a salir tras perder contra ti, y cuando vuelve lo hace SIEMPRE con un mazo de tier mayor.",
+ "personajes": [
+  {
+   "id": "weevil",
+   "nombre": "Weevil Underwood",
+   "avatar": "weevilunderwood",
+   "frase": "Los insectos siempre ganan. Solo hay que esperar.",
+   "mazos": {
+    "1": "weevil-t1",
+    "2": "weevil-t2",
+    "3": "weevil-t3"
+   },
+   "actos": [
+    1
+   ],
+   "repetible": true,
+   "dureza": 15,
+   "cronologia": 10
+  },
+  {
+   "id": "rex",
+   "nombre": "Rex Raptor",
+   "avatar": "rexraptor",
+   "frase": "Mis dinosaurios no saben retroceder.",
+   "mazos": {
+    "1": "rex-t1",
+    "2": "rex-t2",
+    "3": "rex-t3"
+   },
+   "actos": [
+    2
+   ],
+   "repetible": true,
+   "dureza": 46,
+   "cronologia": 60
+  },
+  {
+   "id": "mako",
+   "nombre": "Mako Tsunami",
+   "avatar": "mako",
+   "frase": "El mar me lo dio todo. Y a ti no te va a dar nada.",
+   "mazos": {
+    "1": "mako-t1",
+    "2": "mako-t2",
+    "3": "mako-t3"
+   },
+   "actos": [
+    1
+   ],
+   "repetible": true,
+   "dureza": 69,
+   "cronologia": 30
+  },
+  {
+   "id": "joey",
+   "nombre": "Joey Wheeler",
+   "avatar": "joeywheeler",
+   "frase": "¡No me voy de esta isla sin las diez fichas!",
+   "mazos": {
+    "1": "joey-t1",
+    "2": "joey-t2",
+    "3": "joey-t3"
+   },
+   "actos": [
+    1
+   ],
+   "repetible": true,
+   "dureza": 62,
+   "cronologia": 20
+  },
+  {
+   "id": "mai",
+   "nombre": "Mai Valentine",
+   "avatar": "maikujaku",
+   "frase": "Sé lo que vas a robar antes que tú.",
+   "mazos": {
+    "1": "mai-t1",
+    "2": "mai-t2",
+    "3": "mai-t3"
+   },
+   "actos": [
+    1
+   ],
+   "repetible": true,
+   "dureza": 42,
+   "cronologia": 20
+  },
+  {
+   "id": "panik",
+   "nombre": "PaniK",
+   "avatar": "panik",
+   "frase": "El miedo es una carta más, y yo llevo tres.",
+   "mazos": {
+    "1": "panik-t1",
+    "2": "panik-t2",
+    "3": "panik-t3"
+   },
+   "actos": [
+    2
+   ],
+   "repetible": false,
+   "dureza": 62,
+   "cronologia": 80
+  },
+  {
+   "id": "bonz",
+   "nombre": "Bonz",
+   "avatar": "bonz",
+   "frase": "Mis muertos se levantan más veces que tus monstruos.",
+   "mazos": {
+    "1": "bonz-t1",
+    "2": "bonz-t2",
+    "3": "bonz-t3"
+   },
+   "actos": [
+    2
+   ],
+   "repetible": false,
+   "dureza": 77,
+   "cronologia": 90
+  },
+  {
+   "id": "keith",
+   "nombre": "Bandit Keith",
+   "avatar": "banditkeith",
+   "frase": "En América jugamos para ganar, crío.",
+   "mazos": {
+    "1": "bandit-keith-t1",
+    "2": "bandit-keith-t2",
+    "3": "bandit-keith-t3"
+   },
+   "actos": [],
+   "repetible": true,
+   "dureza": 70,
+   "cronologia": 120
+  },
+  {
+   "id": "kaiba",
+   "nombre": "Seto Kaiba",
+   "avatar": "setokaiba",
+   "frase": "Tres Ojos Azules. No necesito nada más.",
+   "mazos": {
+    "1": "kaiba-t1",
+    "2": "kaiba-t2",
+    "3": "kaiba-t3"
+   },
+   "actos": [],
+   "repetible": false,
+   "dureza": 65,
+   "cronologia": 110
+  },
+  {
+   "id": "labyrinth",
+   "nombre": "Hermanos Paradoja",
+   "avatar": "paradox",
+   "frase": "Nadie sale del laberinto sin nuestro permiso.",
+   "mazos": {
+    "1": "labyrinth-brothers-t1",
+    "2": "labyrinth-brothers-t2",
+    "3": "labyrinth-brothers-t3"
+   },
+   "actos": [
+    2
+   ],
+   "repetible": false,
+   "dureza": 70,
+   "cronologia": 100
+  },
+  {
+   "id": "ghost_kaiba",
+   "nombre": "Ghost Kaiba",
+   "avatar": "ghostkaiba",
+   "frase": "Vas a ver los Ojos Azules antes de lo que crees.",
+   "mazos": {
+    "1": "ghost-kaiba-t1",
+    "2": "ghost-kaiba-t2",
+    "3": "ghost-kaiba-t2"
+   },
+   "actos": [
+    1
+   ],
+   "repetible": false,
+   "dureza": 50,
+   "cronologia": 50,
+   "_nota": "NO es Seto Kaiba. Es el impostor de la isla; existe solo en la cronología temprana y no llega al castillo. Kaiba de verdad es un personaje jugable y rival de torre.",
+   "_nota_avatar": "Tiene su PROPIO retrato desde que E lo aporto: antes reutilizaba el de Seto Kaiba y eran dos personajes distintos con la misma cara, justo lo que confunde en el acto I."
+  }
+ ],
+ "jefes": {
+  "1": {
+   "personaje": "ghost_kaiba",
+   "tier": 2,
+   "nombre": "El impostor de los Ojos Azules"
+  },
+  "2": {
+   "personaje": "labyrinth",
+   "tier": 3,
+   "nombre": "Los guardianes de la puerta"
+  }
+ },
+ "pegasus": {
+  "id": "pegasus",
+  "nombre": "Maximillion Pegasus",
+  "avatar": "pegasus",
+  "frase": "Ya sé lo que llevas en la mano, muchachito.",
+  "_nota": "Siempre experto. El mazo depende de la maestria: la PRIMERA vuelta con cada personaje es Toon metido dentro de un esqueleto goat meta (Goat Control Worlds 2020 con el paquete Toon; lo genera engine/story-tools/pegasus.mjs y no se edita a mano). En cuanto tienes una maestria desbloqueada, Pegasus juega directamente mazos meta del simulador, sin Toon: ya no hay tematica que proteger, hay un jefe final.",
+  "porMaestria": {
+   "0": {
+    "mazo": "pegasus-m0-boss"
+   },
+   "1": {
+    "mazosDelSimulador": [
+     "Goat Control · Worlds 2020",
+     "Warrior Goat Control",
+     "Chaos Control"
+    ]
+   },
+   "2": {
+    "mazosDelSimulador": [
+     "Chaos Turbo · Worlds 2020",
+     "Goat Control · Worlds 2020",
+     "Chaos Control",
+     "Warrior Goat Control"
+    ]
+   },
+   "3": {
+    "mazosDelSimulador": [
+     "Chaos Turbo · Worlds 2020",
+     "Goat Control · Worlds 2020",
+     "Warrior Goat Control",
+     "Reasoning Gate OTK"
+    ]
+   }
+  },
+  "manoInicial": {
+   "_lee_esto": "Abre con SIETE cartas: cinco normales al azar de su mazo MAS Toon World y Toon Summoned Skull. Las dos garantizadas salen de su propio mazo (se mueven arriba antes de robar), no se duplican, y NO sustituyen a ninguna de las cinco: se le dan dos de mas. Antes se le sembraban tres cartas Toon EN LUGAR de tres normales y eso le costaba 6 puntos de victoria medidos, porque cambiaba tres cartas de un esqueleto meta por Toons, que son peores. Sin Toon World sus cartas Toon son papel; con ella, el mazo funciona y el resto de la mano sigue siendo su mazo bueno.",
+   "cartas": [
+    "Toon World",
+    "Toon Summoned Skull"
+   ],
+   "cuantas": 2,
+   "cartasEnMano": 7
+  },
+  "lp": 10000,
+  "_lp_nota": "10000, y el numero viene de una tabla, no de una intuicion. Con el mazo arreglado (solo DOS cartas Toon, porque la mano garantizada ya le da las dos piezas y las copias de repuesto eran peso muerto) y la IA corregida, se midieron 80 partidas por casilla:\n            Goat Control W20   mazo tier 3\n   8000        ~60% jugador      60% jugador\n  10000         49% jugador      43% jugador   <- elegido\n  12000         45% jugador      38% jugador\n  14000         39% jugador      33% jugador\nA 10000 el MEJOR mazo del formato queda a cara o cruz contra el y un mazo normal del castillo pierde; como el humano juega mejor que el bot, esto es un suelo. A 14000 ganaba a todo el mundo, y ademas pasaba algo peor: premiaba a los mazos que aguantan y castigaba a los que corren, asi que un mazo INICIAL le hacia mejor cara que uno de tier 3. Eso es una dificultad invertida y no se arregla con LP: se arreglo quitando las cartas Toon de repuesto, que le costaban 20 puntos medidos."
+ },
+ "starters": [
+  {
+   "id": "yugi-starter-a",
+   "nombre": "El Mago Oscuro",
+   "desc": "Hechiceros y trampas clásicas. Skilled Dark Magician, Kycoo y Magician of Faith sostienen lo que el resto del mazo no.",
+   "carta": 46986414
+  },
+  {
+   "id": "yugi-starter-b",
+   "nombre": "Los guerreros del Rey",
+   "desc": "Guerreros y Magnet Warriors, con Reinforcement of the Army y dos fusiones temáticas.",
+   "carta": 6368038
+  },
+  {
+   "id": "yugi-starter-c",
+   "nombre": "El Soldado del Lustre Negro",
+   "desc": "Ritual y puente Luz-Oscuridad: buscadores, reclutadores y Chaos Sorcerer.",
+   "carta": 5405694
+  },
+  {
+   "id": "joey-starter",
+   "nombre": "El Dragón Negro de Ojos Rojos",
+   "carta": 74677422,
+   "desc": "El mazo del anime: Red-Eyes, Baby Dragon, Time Wizard y la fusión de Flame Swordsman."
+  },
+  {
+   "id": "joey-starter-b",
+   "nombre": "La brigada de guerreros",
+   "carta": 2460565,
+   "desc": "Guerreros de pelea limpia: Gearfried, Goblin Attack Force y Marauding Captain."
+  },
+  {
+   "id": "joey-starter-c",
+   "nombre": "Criador de dragones",
+   "carta": 88819587,
+   "desc": "Baby Dragon y Time Wizard buscando al Ojos Rojos, con dragones que ya pegan."
+  },
+  {
+   "id": "mai-starter",
+   "nombre": "Las Damas Arpía",
+   "carta": 76812113,
+   "desc": "Harpie Lady y sus hermanas, con Elegant Egotist y el Campo de Caza."
+  },
+  {
+   "id": "mai-starter-b",
+   "nombre": "La mascota de las arpías",
+   "carta": 52040216,
+   "desc": "Harpie's Pet Dragon y dragones grandes sostenidos por el Campo de Caza."
+  },
+  {
+   "id": "mai-starter-c",
+   "nombre": "Vuelo rasante",
+   "carta": 91932350,
+   "desc": "Viento y velocidad: arpías, Amazonas y Kamakiri para no parar de atacar."
+  },
+  {
+   "id": "keith-starter",
+   "nombre": "El Dragón de Cañones",
+   "carta": 81480460,
+   "desc": "Barrel Dragon, Mechanicalchaser y un Limiter Removal esperando su momento."
+  },
+  {
+   "id": "keith-starter-b",
+   "nombre": "Chatarra pesada",
+   "carta": 7359741,
+   "desc": "Máquinas baratas y dos Limiter Removal: todo o nada en un solo turno."
+  },
+  {
+   "id": "keith-starter-c",
+   "nombre": "La máquina tragaperras",
+   "carta": 3797883,
+   "desc": "Slot Machine y Barrel Dragon: monstruos grandes y una moneda que decide."
+  },
+  {
+   "id": "kaiba-starter",
+   "nombre": "Los Ojos Azules",
+   "carta": 89631139,
+   "desc": "Blue-Eyes con Lord of D. y la Flauta para sacarlos sin sacrificar."
+  },
+  {
+   "id": "kaiba-starter-b",
+   "nombre": "Rugido de dragón blanco",
+   "carta": 89631139,
+   "desc": "Tres Ojos Azules y Kaibaman: el dragón sale sí o sí."
+  },
+  {
+   "id": "kaiba-starter-c",
+   "nombre": "La guardia de KaibaCorp",
+   "carta": 5053103,
+   "desc": "Battle Ox, La Jinn y compañía: cuerpos grandes desde el primer turno."
+  },
+  {
+   "id": "custom-starter-a",
+   "nombre": "Control por volteo",
+   "desc": "Bichos boca abajo que hacen algo al voltearse. Aguanta y desgasta.",
+   "carta": 504700163
+  },
+  {
+   "id": "custom-starter-b",
+   "nombre": "Ritual de Relinquished",
+   "desc": "Busca la mágica ritual, invoca a Relinquished y róbale su monstruo.",
+   "carta": 504700106
+  },
+  {
+   "id": "custom-starter-c",
+   "nombre": "Fusión",
+   "desc": "Junta las piezas y saca monstruos grandes del Extra Deck.",
+   "carta": 24094653
+  },
+  {
+   "id": "custom-starter-d",
+   "nombre": "Necrovalley",
+   "desc": "Cierra los cementerios y pega con los guardianes de la tumba.",
+   "carta": 511002998
+  },
+  {
+   "id": "custom-starter-e",
+   "nombre": "Zombis",
+   "desc": "Pyramid Turtle saca lo grande y el cementerio nunca se vacía.",
+   "carta": 504700087
+  }
+ ],
+ "jugables": [
+  {
+   "id": "yugi",
+   "nombre": "Yugi Muto",
+   "avatar": "yugimuto",
+   "frase": "Es hora del duelo.",
+   "starters": [
+    "yugi-starter-a",
+    "yugi-starter-b",
+    "yugi-starter-c"
+   ],
+   "torre": "yugi-torre",
+   "dificultadTorre": 5,
+   "identidad": [
+    "Dark Magician",
+    "Dark Magician Girl",
+    "Magician of Faith"
+   ],
+   "cartasDeMaestro": [
+    71413901,
+    31560081,
+    88240808,
+    504700013,
+    504700044,
+    45141844,
+    504700122,
+    34853266,
+    32362575,
+    21417692
+   ]
+  },
+  {
+   "id": "joey",
+   "nombre": "Joey Wheeler",
+   "avatar": "joeywheeler",
+   "frase": "¡No me voy de esta isla sin las diez fichas!",
+   "starters": [
+    "joey-starter",
+    "joey-starter-b",
+    "joey-starter-c"
+   ],
+   "torre": "joey-torre",
+   "dificultadTorre": 3,
+   "identidad": [
+    "Red-Eyes B. Dragon",
+    "Gearfried the Iron Knight",
+    "Goblin Attack Force"
+   ],
+   "cartasDeMaestro": [
+    39507162,
+    7572887,
+    2460565,
+    74131780,
+    504700055,
+    70074904,
+    10375182,
+    21887179,
+    16556849,
+    4041838
+   ]
+  },
+  {
+   "id": "mai",
+   "nombre": "Mai Valentine",
+   "avatar": "maikujaku",
+   "frase": "Sé lo que vas a robar antes que tú.",
+   "starters": [
+    "mai-starter",
+    "mai-starter-b",
+    "mai-starter-c"
+   ],
+   "torre": "mai-torre",
+   "dificultadTorre": 1,
+   "identidad": [
+    "Harpie Lady",
+    "Harpie Lady Sisters",
+    "Harpies' Hunting Ground"
+   ],
+   "cartasDeMaestro": [
+    80316585,
+    91932350,
+    504700073,
+    504700092,
+    30914564,
+    504700145,
+    75782277,
+    504700099,
+    73001017,
+    71283180
+   ]
+  },
+  {
+   "id": "keith",
+   "nombre": "Bandit Keith",
+   "avatar": "banditkeith",
+   "frase": "En América jugamos para ganar, crío.",
+   "starters": [
+    "keith-starter",
+    "keith-starter-b",
+    "keith-starter-c"
+   ],
+   "torre": "keith-torre",
+   "dificultadTorre": 2,
+   "identidad": [
+    "Barrel Dragon",
+    "Mechanicalchaser",
+    "Limiter Removal"
+   ],
+   "cartasDeMaestro": [
+    2851070,
+    11384280,
+    87621407,
+    504700037,
+    25551951,
+    46700124,
+    69015963,
+    30190809,
+    39978267,
+    46303688
+   ]
+  },
+  {
+   "id": "kaiba",
+   "nombre": "Seto Kaiba",
+   "avatar": "setokaiba",
+   "frase": "Tres Ojos Azules. No necesito nada más.",
+   "starters": [
+    "kaiba-starter",
+    "kaiba-starter-b",
+    "kaiba-starter-c"
+   ],
+   "torre": "kaiba-torre",
+   "dificultadTorre": 4,
+   "identidad": [
+    "Blue-Eyes White Dragon",
+    "Lord of D.",
+    "The Flute of Summoning Dragon"
+   ],
+   "cartasDeMaestro": [
+    504700064,
+    31553716,
+    15960641,
+    52824910,
+    504700053,
+    55013285,
+    504700003,
+    504700075,
+    93220472,
+    504700015
+   ]
+  },
+  {
+   "id": "custom",
+   "nombre": "Duelista libre",
+   "avatar": null,
+   "frase": "Nadie sabe quién eres. Todavía.",
+   "esCustom": true,
+   "_lee_esto": "El sexto jugable. NO es un personaje concreto: eliges avatar del elenco del simulador y juegas con un mazo generico. Se desbloquea al ganar el torneo UNA vez con cualquiera de los cinco. Su torre lleva a los CINCO protagonistas mas Pegasus, porque no representa a ninguno: seis combates en vez de cinco. Esa es su dificultad, no numeros inflados.",
+   "starters": [
+    "custom-starter-a",
+    "custom-starter-b",
+    "custom-starter-c",
+    "custom-starter-d",
+    "custom-starter-e"
+   ],
+   "torre": null,
+   "dificultadTorre": 6,
+   "identidad": [
+    "Breaker the Magical Warrior",
+    "Sangan",
+    "Scapegoat"
+   ],
+   "cartasDeMaestro": [
+    71413901,
+    33184167,
+    7572887,
+    31560081,
+    504700178,
+    14087893,
+    504700116,
+    56120475,
+    60082869,
+    5318639
+   ],
+   "_cartas_nota": "Diez cartas R/SR utiles en cualquier mazo goat, ninguna que gane sola. La ventaja del Custom es flexibilidad, no potencia: si aqui hubiera una Pot of Greed o un Black Luster Soldier, elegir Custom seria elegir el modo facil.",
+   "_starters_nota": "Cinco identidades, una por arquetipo que el pool puede hacer crecer: control por volteo, ritual de Relinquished, fusion, Necrovalley y zombis. Los genera story-tools/custom-starters.mjs y check-custom vigila que no suban de potencia por encima de los cinco protagonistas."
+  }
+ ],
+ "torre": [
+  "mai",
+  "keith",
+  "joey",
+  "kaiba",
+  "yugi"
+ ],
+ "_torre_nota": "Orden FIJO y de menor a mayor dureza. Se quita al personaje que estás jugando y quedan cuatro duelos obligatorios + Pegasus. No se sustituye al excluido por nadie: la torre tiene cinco peldaños, no seis.",
+ "_jefes_nota": "Solo dos jefes de acto: el castillo ya no es un acto del mapa sino la TORRE, con su propio orden fijo y Pegasus al final. Cada jefe cae dentro de su ventana cronológica: Ghost Kaiba (50) cierra las orillas y los Hermanos Paradoja (100) cierran el interior.",
+ "maestria": {
+  "_lee_esto": "Los pasivos se DESBLOQUEAN acumulando maestría, pero solo se usa uno por run: si se apilaran, la quinta vuelta empezaría con medio mazo regalado. La maestría sube al GANARLE A PEGASUS con ese personaje, una vez por run (`run.contada`), así que recargar la página no la sube.",
+  "niveles": [
+   {
+    "nivel": 1,
+    "id": "carta-de-maestro",
+    "nombre": "La carta del maestro",
+    "desc": "Antes de empezar, elige una de diez cartas de tu especialidad y añádela al mazo."
+   },
+   {
+    "nivel": 2,
+    "id": "primer-sobre",
+    "nombre": "Contactos en la isla",
+    "desc": "Empiezas la aventura con un sobre de la familia que elijas, ya abierto."
+   },
+   {
+    "nivel": 3,
+    "id": "mano-firme",
+    "nombre": "Mano firme",
+    "desc": "Las tres recompensas de cada duelo suben un escalón de rareza."
+   }
+  ]
+ },
+ "_custom_desbloqueo": "El Custom aparece en la pantalla de inicio solo si meta.runsGanadas >= 1, o sea tras ganar el torneo una vez con cualquiera. Se comprueba en pasivosDe/jugablesDisponibles, no en la pantalla."
+}

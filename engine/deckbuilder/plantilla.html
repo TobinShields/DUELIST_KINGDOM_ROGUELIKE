@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goat Format — Deck Builder</title>
+<style>/*__CSS__*/
+.secSlots{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--edge)}
+.secSlots h4{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:9px;display:flex;justify-content:space-between}
+#slots .slot{display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:5px;
+  background:#101a2e;border:1px solid var(--edge);cursor:pointer;transition:.14s;font-size:12.5px}
+#slots .slot:hover{border-color:var(--gold)}
+#slots .slot.act{border-color:var(--gold);background:rgba(216,180,92,.14)}
+#slots .slot.inval .sc{color:#ff8f7a}
+#slots .sn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#slots .sc{font-size:11px;color:#8aa4c8;font-variant-numeric:tabular-nums}
+#slots .sx{background:none;border:none;color:#5f7594;cursor:pointer;font-size:13px;padding:0 3px}
+#slots .sx:hover{color:#ff6a55}
+#slots .vacio{font-size:12px;color:#5f7594;padding:6px 0}
+
+.btn.volver{text-decoration:none;display:inline-block;border-color:rgba(216,180,92,.5);color:var(--gold)}
+.btn.volver:hover{background:linear-gradient(180deg,#2a3a5c,#182votes)}
+.btn.volver:hover{background:#1d2a45;color:#fff}
+</style></head><body>
+<div id="top">
+  <a class="btn volver" href="goat-simulador.html">← Menú principal</a>
+  <span class="marca">Deck Builder</span>
+  <input id="nombreMazo" placeholder="Nombre del mazo">
+  <span style="flex:1"></span>
+  <button class="btn" id="btnImportar">Importar .ydk</button>
+  <button class="btn" id="pegar">Pegar lista</button>
+  <button class="btn" id="btnYdk">Exportar .ydk</button>
+  <button class="btn oro" id="btnSim">Exportar para el simulador</button>
+  <button class="btn oro" id="btnGuardar">Guardar</button>
+  <button class="btn" id="btnGuardarComo">Guardar como nuevo</button>
+  <button class="btn" id="btnNuevo">Nuevo</button>
+  <button class="btn" id="btnVaciar">Vaciar</button>
+  <input type="file" id="ficheroYdk" accept=".ydk,.txt" style="display:none">
+</div>
+<!-- En un teléfono no caben tres columnas: el mazo se abre y se cierra
+     con este botón, que además dice cuántas cartas llevas. -->
+<button id="verMazo" class="btn oro">Mazo <span id="verMazoN">0</span></button>
+<div id="avisoPool">Pool provisional: se muestran todas las cartas de la base de datos.
+  Falta la lista oficial de Goat para restringirlo — mira el README.</div>
+<div id="wrap">
+  <aside id="izq">
+    <div class="secSlots">
+      <h4>Mis mazos <span id="nSlots">0</span></h4>
+      <div id="slots"></div>
+    </div>
+    <div id="detalle"><p style="color:#5f7594;font-size:13px;line-height:1.7">
+    <span class="soloRaton">Pasa el ratón por una carta para ver su texto.</span><span class="soloTacto">Toca una carta para ver su texto.</span><br><br>
+    <span class="soloRaton">Clic izquierdo: añadir al mazo.<br>Clic derecho: añadir al Side.<br>
+    Clic en una carta del mazo: quitarla.</span><span class="soloTacto">Arrastra una carta del buscador al mazo, y del mazo al buscador para quitarla. Un toque abre su ficha.</span></p></div></aside>
+  <div id="centro">
+    <div id="filtros">
+      <input id="buscar" placeholder="Buscar por nombre o texto…">
+      <select id="fTipo">
+        <option value="todos">Todos</option><option value="monstruo">Monstruos</option>
+        <option value="magica">Mágicas</option><option value="trampa">Trampas</option>
+        <option value="fusion">Fusión</option>
+      </select>
+      <select id="fAtr"><option value="0">Atributo</option><option value="16">LUZ</option>
+        <option value="32">OSCURIDAD</option><option value="4">TIERRA</option>
+        <option value="8">VIENTO</option><option value="1">FUEGO</option>
+        <option value="2">AGUA</option><option value="64">DIVINO</option></select>
+      <select id="fNivel"><option value="0">Nivel</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+        <option>9</option><option>10</option><option>11</option><option>12</option></select>
+      <span id="conteo"></span>
+    </div>
+    <div id="grid"></div>
+  </div>
+  <aside id="der">
+    <div id="cabDeck"><div id="estado"></div><div id="reparto"></div></div>
+    <div id="zonas">
+      <div class="zona"><h4>Main Deck <span id="nmain">0</span></h4><div class="lista" id="main"></div></div>
+      <div class="zona"><h4>Extra Deck <span id="nextra">0</span></h4><div class="lista" id="extra"></div></div>
+      <div class="zona"><h4>Side Deck <span id="nside">0</span></h4><div class="lista" id="side"></div></div>
+    </div>
+  </aside>
+</div>
+<div id="aviso"></div>
+<script>
+/*__I18N__*/
+__setIdioma?.((()=>{ try{ return (JSON.parse(localStorage.getItem("goatConfig")||"{}").idioma)||"en"; }catch(e){ return "en"; } })());
+__traducirDOM?.(document.body);
+const CARDS=/*__CARDS__*/;
+const TEXTS=/*__TEXTS__*/;
+const POOL=/*__POOL__*/;
+const LIMITES=/*__LIMITES__*/;
+/* Con qué passcode se pide la ILUSTRACIÓN de cada carta. No es lo mismo
+   que el `alias` de reglas: ver la nota de `arte()` en app.js. Hacen
+   falta las dos cosas porque hay Pre-Erratas cuyo passcode inventado
+   tiene OCHO dígitos —Night Assailant y Big Shield Gardna— y por el
+   tamaño no se distinguen de uno de Konami. */
+const IMG_ALIAS=/*__IMGALIAS__*/;
+/*__APP__*/
+</script></body></html>

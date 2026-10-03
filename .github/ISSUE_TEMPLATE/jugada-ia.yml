@@ -1,0 +1,53 @@
+name: "🤖 AI misplay · Jugada rara de la IA"
+description: "The bot made a play a good Goat player wouldn't make. · El bot hizo una jugada que un buen jugador de Goat no haría."
+title: "[IA] "
+labels: ["jugada-ia"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks!** Every report becomes a test position the AI has to pass. The **Report** button inside the game downloads the duel log and fills in most of this form.
+        **¡Gracias!** Cada reporte se convierte en una posición de prueba que la IA tiene que pasar. El botón **Reportar** del juego descarga el log del duelo y rellena casi todo esto.
+  - type: textarea
+    id: que_paso
+    attributes:
+      label: "What did the AI do? · ¿Qué hizo la IA?"
+      placeholder: "Turn 5: it used Book of Moon on its own Breaker instead of my Jinzo."
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: "What should it have done, and why? · ¿Qué debería haber hecho y por qué?"
+      placeholder: "Book of Moon on Jinzo: it was attacking for game next turn."
+  - type: textarea
+    id: log
+    attributes:
+      label: "Duel log · Log del duelo"
+      description: "Drag here the .txt file the game downloaded (goat-log-…). Without it we can't replay the position. · Arrastra aquí el .txt que descargó el juego (goat-log-…). Sin él no se puede repetir la posición."
+      placeholder: "📎 Drop goat-log-….txt here · Suelta aquí goat-log-….txt"
+  - type: input
+    id: modo
+    attributes:
+      label: "Game mode · Modo de juego"
+  - type: input
+    id: mazos
+    attributes:
+      label: "Decks · Mazos"
+  - type: input
+    id: turno
+    attributes:
+      label: "Turn · Turno"
+  - type: input
+    id: version
+    attributes:
+      label: "Game version (build) · Versión del juego"
+  - type: input
+    id: navegador
+    attributes:
+      label: "Browser and device · Navegador y dispositivo"
+  - type: textarea
+    id: ultimas
+    attributes:
+      label: "Last plays (filled in by the game) · Últimas jugadas (las rellena el juego)"
+      render: text

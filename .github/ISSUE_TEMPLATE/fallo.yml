@@ -1,0 +1,57 @@
+name: "🐞 Bug report · Fallo del juego"
+description: "Something broke, froze or a card/rule worked wrong. · Algo se rompió, se quedó colgado o una carta/regla funcionó mal."
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for reporting!** The easiest way is the **Report** button inside the game (top bar or end-of-duel screen): it downloads the duel log and fills in most of this form for you.
+        **¡Gracias por avisar!** Lo más fácil es el botón **Reportar** del juego (barra de arriba o pantalla final del duelo): descarga el log del duelo y rellena casi todo esto por ti.
+  - type: textarea
+    id: que_paso
+    attributes:
+      label: "What happened? · ¿Qué pasó?"
+      description: "Which card, which turn, what you clicked. · Qué carta, en qué turno, qué pulsaste."
+      placeholder: "Turn 7: I activated Book of Moon on their Sangan and the game froze."
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: "What did you expect? · ¿Qué esperabas que pasara?"
+      placeholder: "Sangan flips face-down and the chain resolves."
+  - type: textarea
+    id: log
+    attributes:
+      label: "Duel log · Log del duelo"
+      description: "Drag here the .txt file the game downloaded (goat-log-…). It lets us replay the duel exactly. · Arrastra aquí el .txt que descargó el juego (goat-log-…). Con él se puede repetir el duelo tal cual."
+      placeholder: "📎 Drop goat-log-….txt here · Suelta aquí goat-log-….txt"
+  - type: input
+    id: modo
+    attributes:
+      label: "Game mode · Modo de juego"
+      placeholder: "free duel / Duelist Kingdom / Swiss tournament / room"
+  - type: input
+    id: mazos
+    attributes:
+      label: "Decks · Mazos"
+      placeholder: "Goat Control vs Chaos Turbo"
+  - type: input
+    id: turno
+    attributes:
+      label: "Turn · Turno"
+  - type: input
+    id: version
+    attributes:
+      label: "Game version (build) · Versión del juego"
+      description: "Shown at the bottom of the main menu. · Sale abajo en el menú principal."
+  - type: input
+    id: navegador
+    attributes:
+      label: "Browser and device · Navegador y dispositivo"
+  - type: textarea
+    id: ultimas
+    attributes:
+      label: "Last plays (filled in by the game) · Últimas jugadas (las rellena el juego)"
+      render: text

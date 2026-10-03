@@ -1,0 +1,31 @@
+{
+  "_lee_esto": "Arreglos sobre los mazos del brief, aplicados al importarlo. Van aquí y no a mano en decks.json porque decks.json es GENERADO: editarlo se pierde en la siguiente regeneración. Cada parche dice qué quita, qué añade y por qué. Los nombres se resuelven contra el pool igual que el resto (sin sufijo (GOAT)).",
+
+  "yugi-starter-a": {
+    "motivo": "Llevaba Polymerization y el Extra Deck VACÍO: una carta muerta desde el primer turno. Se le da su fusión de siempre (Dark Magician + Buster Blader), que además le sirve al mazo: Dark Paladin es un 2900 que gana ATK por cada dragón del rival.",
+    "quitar": ["Beaver Warrior"],
+    "añadir": ["Buster Blader"],
+    "extra": ["Dark Paladin"]
+  },
+
+  "kaiba-t1": {
+    "motivo": "Tenía Rabid Horseman en el Extra pero le faltaba uno de los dos materiales, así que la fusión no se podía hacer nunca. Con Mystic Horseman ya sale con los dos Battle Ox que lleva.",
+    "quitar": ["Ryu-Kishin Powered"],
+    "añadir": ["Mystic Horseman"],
+    "extra": []
+  },
+
+  "labyrinth-brothers-t1": {
+    "motivo": "Polymerization sin una sola fusión posible con lo que lleva el mazo, y sin Extra Deck. En vez de inventarle una fusión que no pega, se cambia por otra Waboku: el mazo es de muro y aguantar es justo lo suyo.",
+    "quitar": ["Polymerization"],
+    "añadir": ["Waboku"],
+    "extra": []
+  },
+
+  "joey-t1": {
+    "motivo": "Giltia the D. Knight pedía materiales que el mazo no lleva. Thousand Dragon sí sale (Baby Dragon + Time Wizard), así que se queda solo esa y el hueco va a otra fusión que sí se puede hacer con lo que hay.",
+    "quitar": [],
+    "añadir": [],
+    "extraQuitar": ["Giltia the D. Knight"]
+  }
+}

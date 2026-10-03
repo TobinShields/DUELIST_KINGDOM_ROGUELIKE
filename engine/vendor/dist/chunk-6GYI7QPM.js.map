@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../scripts/inject-import-meta-url.js"],
+  "sourcesContent": ["export const import_meta_url = \"file:ocgcore-wasm\";\n"],
+  "mappings": "AAAO,IAAMA,EAAkB",
+  "names": ["import_meta_url"]
+}

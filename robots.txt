@@ -1,0 +1,8 @@
+# Todo indexable salvo el juego: son 6 MB de wasm sin texto. Lo que hay
+# que indexar es la portada.
+User-agent: *
+Allow: /
+Disallow: /goat-simulador.html
+Disallow: /deckbuilder.html
+
+Sitemap: https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/sitemap.xml

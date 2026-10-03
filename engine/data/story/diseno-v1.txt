@@ -1,0 +1,2137 @@
+DUELIST KINGDOM ROGUELIKE — DESIGN & CONTENT DATA v1.0
+===========================================================
+Project: circlenline / GOAT Format Simulator
+Purpose: implementation-grade design brief + curated GOAT reward/card data + candidate character decks.
+Language: systems/design notes in Spanish; official card names in English.
+
+IMPORTANT IMPLEMENTATION RULE
+-----------------------------
+The simulator repository is the final authority. Before a card is shipped in Story Mode, resolve its exact
+legal passcode against engine/data/goat-pool.json and its copy cap against engine/data/goat-limites.json.
+pool_texts.json may contain alternate/GOAT/anime/action-field variants and therefore is NOT sufficient by
+itself to prove story legality. Never silently add a modern or unavailable card.
+
+The decklists below have been internally checked for 40-card main-deck size and April-2005 1/2/3 copy caps,
+but Claude must run a repository-level validator over every final card/passcode before integrating them.
+
+1. PRODUCT THESIS
+-----------------
+Duelist Kingdom should not be a linear anime campaign. It is a 30–45 minute, seeded, replayable deckbuilding
+roguelike that uses Duelist Kingdom as its fiction and GOAT Format as its rules engine.
+
+The fantasy:
+- Start as Yugi with a recognizable, intentionally imperfect anime-style deck.
+- Navigate a visible branching island map.
+- Win and wager Star Chips.
+- Open 10-card packs and keep every card in a temporary Run Binder.
+- Constantly rebuild a legal 40–60 card deck.
+- Gradually replace weak anime cards with premium staples and stronger thematic engines.
+- Reach 10 Star Chips, enter Pegasus Castle, and finish with a deck that can plausibly resemble a good GOAT deck.
+- Defeat Pegasus on Expert.
+- Future clears unlock character mastery/passives and eventually additional playable duelists.
+
+Core design tension:
+"Do I keep improving the strategy I started with, or pivot because the run is offering me a better engine?"
+
+2. NON-NEGOTIABLE DESIGN PILLARS
+--------------------------------
+1) GOAT legality is absolute. No Raigeki, Dark Hole, Monster Reborn, Change of Heart, Harpie's Feather Duster,
+   or any other forbidden/non-pool card.
+2) Character fantasy survives difficulty scaling. Weevil remains Insect; Mako remains WATER; Kaiba keeps
+   Blue-Eyes; Joey keeps Red-Eyes; Pegasus M0 remains Toon/Relinquished-flavored.
+3) Difficulty comes mainly from deck quality and competent AI, not from deliberately stupid early AI.
+4) Normal rewards should almost never feel like three pieces of trash.
+5) "Staple" is not synonymous with "auto-include." The loot system distinguishes universal power, premium
+   interaction, and strategy-dependent engines.
+6) Story rarity is an internal power/desirability tier, NOT printed Konami rarity.
+7) The player chooses pack families. The game may react to the current deck only for guaranteed typed/synergy
+   slots; it must never lock the player into the starter identity.
+8) Run collection is temporary. Meta progression unlocks options/passives rather than permanent combat stats.
+9) Existing VS Duel, Bot Mode, deck builder and ocgcore behavior must remain untouched/regression-tested.
+10) No server, account, paid backend or external API is required.
+
+3. RUN STRUCTURE
+----------------
+Target length: 30–45 minutes.
+Structure: 3 Acts, each with approximately 6–8 traversed nodes. The complete Act map is visible from the start.
+Not every node is a duel; target approximately 8–9 real duels in a full run.
+
+ACT I — THE SHORES
+- First two fights intentionally forgiving.
+- Enemy Tier 1: anime-recognizable, functional, low staple density.
+- Typical characters: Weevil, Rex, Mako, Joey.
+- At least one Pack node and one utility node before the boss.
+- No unavoidable Elite in the first two columns.
+
+ACT II — THE ISLAND INTERIOR
+- Tier 2 becomes the norm; selected Elites can use Tier 3.
+- Characters: Mai, PaniK, Bonz, Bandit Keith, Labyrinth Brothers, stronger returning duelists.
+- More recruiter engines, removal, traps and coherent win conditions.
+- The player should normally be approaching 8–10 Star Chips here.
+
+ACT III — PEGASUS CASTLE
+- Entry requires castleQualified=true, earned by reaching 10 Star Chips at least once.
+- Tier 3 / meta-adjacent opponents.
+- Finalist pool can include Joey T3, Kaiba T3, Mai T3, Bandit Keith T3, Labyrinth T3, etc.
+- Pegasus is always the final boss and always uses Expert AI.
+
+Suggested node types:
+DUEL / ELITE / PACK / CAMP / TRADER / EVENT / BOSS.
+
+Map constraints:
+- deterministic from seed;
+- multiple meaningful routes;
+- no impossible path to 10 chips if the player wins available opportunities;
+- at least one Pack before every Act boss;
+- at least one Camp or Trader in Acts I and II;
+- no dead-end route created by insufficient Star Chips;
+- track defeated characters to prevent nonsensical repetition;
+- allow explicit repeat variants only when configured as narratively acceptable.
+
+4. STAR CHIP ECONOMY — PROGRESSION + LIVES IN ONE SYSTEM
+--------------------------------------------------------
+Recommended v1 implementation:
+- Start run with 2 Star Chips.
+- Star Chips are both tournament qualification progress and the run's loss buffer.
+- Standard Duel: stake 1. Win => +1 chip. Lose => -1 chip; node resolves and run may continue.
+- Elite Duel: stake 1. Win => +2 chips + Elite rewards. Lose => -1 chip but still get the configured 1-of-3
+  consolation reward.
+- Act Boss: must be defeated to advance. Win => +2 chips. Loss => -1 chip and retry/route back to boss gate
+  while chips remain.
+- 0 chips => eliminated / run over.
+- High-Stakes option: where enabled, stake 2 instead of 1. Win => +2; lose => -2. Never stake more than owned.
+- Events may create +1, -1 or wager outcomes.
+- Reaching 10 for the first time sets castleQualified=true permanently for that run.
+- Once qualified, dropping below 10 in the castle does not eject the player.
+- If player reaches the castle gate below 10 but above 0, generate deterministic Last Chance Duel branches
+  until qualification remains mathematically possible. Never hard-lock a living run.
+- Camp recovery restores exactly one chip that was actually lost earlier. Track recoverableLostChips.
+- Display chips prominently as a Duelist Kingdom glove/progression object.
+
+This preserves the anime reason for collecting 10 while making losses meaningful without forcing every single
+loss to delete a 30-minute run.
+
+5. PLAYER COLLECTION MODEL
+--------------------------
+- Active Main Deck: 40–60 cards, standard GOAT copy limits.
+- Run Binder: temporary and effectively unbounded for v1.
+- Run Fusion/Extra Binder: separate temporary collection.
+- Player may open Deck Editor from the map at all times.
+- Rewards enter Binder first; never auto-shove cards into Main Deck.
+- Enforce legal max copies across the active deck, using the same rules/data as the existing deck builder.
+- On run end, temporary Binder/deck are discarded; meta unlocks persist.
+
+6. NORMAL DUEL REWARD
+---------------------
+Every normal Duel victory: show exactly 3 cards, choose exactly 1.
+
+Generate the trio as:
+A) SYNERGY: weighted toward current deck's dominant tags/type/engine.
+B) QUALITY: generic competitive playable / staple.
+C) PIVOT: adjacent or deliberately different strategy.
+
+Quality floor:
+- Outside explicitly labeled Bulk events, never intentionally generate three low-desirability cards.
+- If all three candidates evaluate below rewardFloor, reroll deterministically from the same seed stream.
+- Respect copy caps: a card already owned at its legal maximum should be removed/rerolled from normal rewards.
+
+7. TEN-CARD BOOSTER PACKS
+-------------------------
+Player chooses one of FIVE broad pack families. Each pack has exactly 10 cards and the player keeps ALL 10.
+
+Exact slot contract:
+1–2) GLOBAL STAPLE slots: weighted from the premium generic pool.
+3) TYPE MATCH slot: guaranteed Monster matching the current Main Deck's dominant monster Type.
+   Tie-breaker: starter deck primary Type. If no legal candidate exists, use the closest strategy-tag Monster.
+4–5) PACK CORE slots: chosen pack family.
+6–8) GENERIC PLAYABLE slots: broad playable pool, avoiding low-value filler.
+9) PIVOT/WILDCARD slot: adjacent strategy or a different pack family.
+10) PREMIUM slot: high-rarity family card, Extra/Fusion card, or weighted global premium.
+
+Anti-duplication:
+- Don't offer cards the player cannot legally use because their owned quantity is already at the legal maximum,
+  except inside the intentionally chaotic 40-card Bulk event.
+- Pack duplicate copies are allowed only while the combined owned quantity remains legally useful.
+
+Suggested staple-slot story-rarity weights:
+Act I:  Rare 70% / Super 27% / Ultra 3%
+Act II: Rare 55% / Super 37% / Ultra 8%
+Act III: Rare 40% / Super 45% / Ultra 15%
+
+Premium slot receives a separate family-biased table; Elite packs get an upgraded premium distribution.
+These are tuning defaults, not sacred constants. Put them in data/config.
+
+8. INTERNAL STORY RARITY
+------------------------
+Use four implementation tiers:
+C = Bulk/Common utility; intentionally not part of routine premium reward screens.
+R = Strong playable / role-player / recruiter / matchup card.
+SR = Premium interaction / engine cornerstone.
+UR = Jackpot / run-defining power.
+
+Printed TCG rarity is irrelevant.
+Banlist status influences availability but does not automatically determine story rarity.
+Example: Swords of Revealing Light is Limited but should not have the same jackpot weight as Pot of Greed.
+
+9. CURATED PREMIUM GENERIC / REWARD-WORTHY POOL
+------------------------------------------------
+This is deliberately larger than a tiny "staples list". Some cards are universal; others are high-quality role
+players or engine pieces. The purpose is to preserve the dopamine of opening something useful without causing
+every successful run to converge immediately on the same 40 cards.
+
+ULTRA / JACKPOT — true run-defining hits
+- Pot of Greed
+- Graceful Charity
+- Delinquent Duo
+- Heavy Storm
+- Snatch Steal
+- Premature Burial
+- Mirror Force
+- Ring of Destruction
+- Torrential Tribute
+- Call of the Haunted
+- Breaker the Magical Warrior
+- Tribe-Infecting Virus
+- Sinister Serpent
+- Black Luster Soldier - Envoy of the Beginning
+
+SUPER — premium staples / high-impact competitive cards
+- Mystical Space Typhoon
+- Book of Moon
+- Scapegoat
+- Metamorphosis
+- Nobleman of Crossout
+- Reinforcement of the Army
+- Swords of Revealing Light
+- Solemn Judgment
+- Trap Dustshoot
+- Sakuretsu Armor
+- Dust Tornado
+- Creature Swap
+- Smashing Ground
+- Brain Control
+- Enemy Controller
+- Compulsory Evacuation Device
+- Raigeki Break
+- Phoenix Wing Wind Blast
+- D.D. Warrior Lady
+- Exiled Force
+- Jinzo
+- Morphing Jar
+- Cyber Jar
+- Sangan
+- Kycoo the Ghost Destroyer
+- Magician of Faith
+- Tsukuyomi
+- Dekoichi the Battlechanted Locomotive
+- Chaos Sorcerer
+
+RARE — strong role-players, recruiters and engine pieces
+- Night Assailant
+- Spirit Reaper
+- Don Zaloog
+- Blade Knight
+- D.D. Assailant
+- Asura Priest
+- Airknight Parshath
+- Mobius the Frost Monarch
+- Gravekeeper's Spy
+- Apprentice Magician
+- Old Vindictive Magician
+- Thunder Dragon
+- Widespread Ruin
+- Bottomless Trap Hole
+- Waboku
+- Threatening Roar
+- Magic Cylinder
+- Ceasefire
+- Royal Decree
+- Skill Drain
+- Lightning Vortex
+- Card Destruction
+- Upstart Goblin
+- Giant Trunade
+- My Body as a Shield
+- Injection Fairy Lily
+- Reflect Bounder
+- King Tiger Wanghu
+- Bazoo the Soul-Eater
+- Giant Rat
+- Mystic Tomato
+- Shining Angel
+- Mother Grizzly
+- Flying Kamakiri #1
+- UFO Turtle
+- Magical Merchant
+
+10. FIVE PLAYER-CHOSEN PACK FAMILIES
+------------------------------------
+
+ARCANE ARTS
+Identity: Spellcaster / Dark Magician / Flip Control / Ritual / LIGHT-DARK bridge
+Candidate family pool:
+- Dark Magician
+- Dark Magician Girl
+- Skilled Dark Magician
+- Skilled White Magician
+- Breaker the Magical Warrior
+- Kycoo the Ghost Destroyer
+- Magician of Faith
+- Apprentice Magician
+- Old Vindictive Magician
+- Gravekeeper's Spy
+- Gravekeeper's Guard
+- Magical Merchant
+- Injection Fairy Lily
+- Manju of the Ten Thousand Hands
+- Senju of the Thousand Hands
+- Sonic Bird
+- Relinquished
+- Chaos Sorcerer
+- Tsukuyomi
+- Book of Moon
+- Dark Magic Attack
+- Thousand Knives
+- Black Illusion Ritual
+- Black Luster Ritual
+- Enemy Controller
+- Spell Shield Type-8
+- Divine Wrath
+
+WARRIOR ARSENAL
+Identity: Warrior toolbox / Earth pressure / Equip / aggression
+Candidate family pool:
+- Blade Knight
+- D.D. Warrior Lady
+- D.D. Assailant
+- Exiled Force
+- Don Zaloog
+- Mystic Swordsman LV2
+- Marauding Captain
+- Zombyra the Dark
+- Goblin Attack Force
+- Mataza the Zapper
+- Armed Samurai - Ben Kei
+- Gearfried the Iron Knight
+- Obnoxious Celtic Guard
+- Berserk Gorilla
+- Giant Rat
+- Injection Fairy Lily
+- Reinforcement of the Army
+- The Warrior Returning Alive
+- Creature Swap
+- Smashing Ground
+- Nobleman of Crossout
+- Axe of Despair
+- Mage Power
+- United We Stand
+- Big Bang Shot
+- Fusion Sword Murasame Blade
+- My Body as a Shield
+- Trap Dustshoot
+- Sakuretsu Armor
+
+DRAGON'S ROAR
+Identity: Blue-Eyes / Red-Eyes / Dragon tempo / King Dragun / high-level Dragon engines
+Candidate family pool:
+- Blue-Eyes White Dragon
+- Red-Eyes Black Dragon
+- Kaibaman
+- Black Dragon's Chick
+- Lord of D.
+- Mirage Dragon
+- Luster Dragon
+- Spear Dragon
+- Twin-Headed Behemoth
+- Fusilier Dragon, the Dual-Mode Beast
+- Horus the Black Flame Dragon LV4
+- Horus the Black Flame Dragon LV6
+- Horus the Black Flame Dragon LV8
+- Masked Dragon
+- Cave Dragon
+- The Flute of Summoning Dragon
+- Burst Stream of Destruction
+- Inferno Fire Blast
+- Stamping Destruction
+- Dragon's Gunfire
+- Dragon's Rage
+- Metamorphosis
+- Premature Burial
+- King Dragun
+- Black Skull Dragon
+- Dark Blade the Dragon Knight
+
+RECRUITER FRONT
+Identity: WATER / WIND / Insect / Beast-EARTH recruiter ecosystems; tempo through board replacement
+Candidate family pool:
+- Abyss Soldier
+- Mother Grizzly
+- Mermaid Knight
+- Levia-Dragon - Daedalus
+- Tribe-Infecting Virus
+- Yomi Ship
+- Aqua Spirit
+- Mobius the Frost Monarch
+- Flying Kamakiri #1
+- Birdface
+- Harpie Lady 1
+- Silpheed
+- Twin-Headed Behemoth
+- Giant Rat
+- Berserk Gorilla
+- King Tiger Wanghu
+- Howling Insect
+- Ultimate Insect LV3
+- Ultimate Insect LV5
+- Ultimate Insect LV7
+- Insect Knight
+- Pinch Hopper
+- A Legendary Ocean
+- Salvage
+- Creature Swap
+- Smashing Ground
+- Insect Imitation
+- Elegant Egotist
+- Harpies' Hunting Ground
+- Widespread Ruin
+
+FORBIDDEN TACTICS
+Identity: Goat/Metamorphosis / Chaos / Zombies / Machines / Graveyard / combo-adjacent engines
+Candidate family pool:
+- Scapegoat
+- Metamorphosis
+- Thousand-Eyes Restrict
+- Chaos Sorcerer
+- Black Luster Soldier - Envoy of the Beginning
+- Thunder Dragon
+- Night Assailant
+- Dekoichi the Battlechanted Locomotive
+- Magical Merchant
+- Raigeki Break
+- Phoenix Wing Wind Blast
+- Card Destruction
+- Pyramid Turtle
+- Spirit Reaper
+- Vampire Lord
+- Ryu Kokki
+- Book of Life
+- UFO Turtle
+- Mechanicalchaser
+- X-Head Cannon
+- Reflect Bounder
+- Limiter Removal
+- Reasoning
+- Monster Gate
+- Fusilier Dragon, the Dual-Mode Beast
+- Dark Balter the Terrible
+- Fiend Skull Dragon
+- Ryu Senshi
+- Gatling Dragon
+- The Last Warrior from Another Planet
+
+11. BULK EVENT
+--------------
+Special Event example: "Abandoned Card Trunk".
+- Add 40 deterministic random C/Bulk-eligible legal cards to Run Binder.
+- No guarantee that these are immediately good.
+- Purpose: strange deck experiments + Trader fuel.
+- This event is the explicit exception to the normal reward quality floor.
+- Bulk pool must exclude forbidden cards and should heavily down-weight cards already at max useful copies.
+
+12. TRADER — NO CURRENCY
+------------------------
+Trader replaces a normal shop. It converts excess Binder volume into directed quality.
+
+Recommended v1 recipes:
+A) BULK TRADE
+   Sacrifice 10 C/Bulk cards -> choose 1 of 3 R cards.
+B) FOCUSED TRADE
+   Sacrifice 15 C/Bulk cards sharing Monster/Spell/Trap category -> choose 1 of 3 R/SR cards of that category.
+C) PREMIUM TRADE
+   Sacrifice 20 C/Bulk cards -> choose 1 of 3 SR cards.
+D) PRESTIGE TRADE
+   Sacrifice 2 SR + 2 R -> choose 1 of 3 UR cards. Maximum once per Trader visit.
+E) EQUAL EXCHANGE
+   Sacrifice 2 cards of the same story rarity -> choose 1 of 3 alternatives of that same rarity.
+   Maximum once per visit.
+
+All prices must be config-driven and Monte-Carlo tested. Mirror Force/Pot/Graceful-class cards should feel
+expensive; the Trader must rescue bad loot, not guarantee a complete power-card suite every run.
+
+13. CAMP
+--------
+At every Camp choose ONE:
+1) FORTIFY
+   +1000 starting LP for the next 3 Story duels.
+   Non-stacking in v1; selecting again refreshes duration. Suggested hard cap: 10000 starting LP.
+2) RECOVER STAR CHIP
+   Restore exactly 1 previously lost Star Chip. Only available if recoverableLostChips > 0.
+3) REFINE
+   "Improve rarity" means transform value, not alter a printed card's physical rarity:
+   sacrifice one owned C/R/SR card, then choose 1 of 3 offered cards from the next story-rarity tier with
+   compatible CardType/tags. Respect copy limits.
+
+14. EVENTS
+----------
+Tone: short character encounter, portrait + 2–3 choices; mechanically meaningful but not a visual novel.
+Examples:
+- Joey trade: swap one owned card for a Joey-tagged option.
+- Grandpa advice: choose one of three Spellcaster/strategy cards or improve the next reward.
+- Rare Hunter: risk one Star Chip for a premium reward.
+- Weevil trick: accept temporary drawback for upgraded next reward.
+- Star Chip wager: double-or-nothing duel/event.
+- Abandoned Card Trunk: gain the 40-card Bulk bundle.
+All event outcomes are seeded and data-driven.
+
+15. FUSION / EXTRA-DECK PROGRESSION
+----------------------------------
+Competitive Fusion cards are progression rewards, not universally unlocked at run start.
+
+High-value GOAT progression targets:
+- Thousand-Eyes Restrict — Level 1 — highest priority with Scapegoat/Metamorphosis.
+- Reaper on the Nightmare — Level 5.
+- Dark Balter the Terrible — Level 5.
+- Fiend Skull Dragon — Level 5.
+- Ryu Senshi — Level 6.
+- Dark Flare Knight — Level 6.
+- Dark Blade the Dragon Knight — Level 6.
+- The Last Warrior from Another Planet — Level 7.
+- King Dragun — Level 7.
+- Gatling Dragon — Level 8.
+- Master of Oz — Level 9.
+
+Thematic early Fusions can also be starter/reward content:
+- Gaia the Dragon Champion
+- Chimera the Flying Mythical Beast
+- Thousand Dragon
+- Giltia the D. Knight
+- Black Skull Dragon
+- Rabid Horseman
+
+Synergy protection:
+If player owns Metamorphosis but no useful Fusion target for levels represented in their Main Deck, slightly
+increase compatible Fusion reward weight. Likewise, acquiring Thousand-Eyes Restrict should modestly raise
+Scapegoat/Metamorphosis relevance without guaranteeing them.
+
+16. CHARACTER MASTERY / PASSIVES
+--------------------------------
+Meta progression is character-specific and primarily horizontal.
+
+Yugi Mastery 0:
+- no passive; base experience.
+
+Yugi Mastery 1 unlock condition:
+- complete one full Yugi run.
+
+Passive example: GRANDPA'S WISDOM
+- At run start, before the first map node, choose 1 of 10 curated, strategically relevant GOAT Spellcasters:
+  1. Breaker the Magical Warrior
+  2. Magician of Faith
+  3. Tsukuyomi
+  4. Kycoo the Ghost Destroyer
+  5. Apprentice Magician
+  6. Gravekeeper's Spy
+  7. Old Vindictive Magician
+  8. Skilled Dark Magician
+  9. Skilled White Magician
+  10. Injection Fairy Lily
+
+This is a curated high-usage/high-relevance set, NOT a claim that these are the exact ten statistically most
+played Spellcasters in all historical datasets.
+
+Future mastery levels may unlock alternate passives/starter choices, but avoid permanent +ATK/+draw/stat grind.
+The architecture must be data-driven so future Joey/Kaiba/Mai characters can define their own mastery trees.
+
+17. ENEMY DIFFICULTY MODEL
+--------------------------
+Enemy = character identity + strategy + powerTier + AI difficulty.
+
+Tier 1 = ANIME FUNCTIONAL
+- recognizable signature cards;
+- weak/nostalgic cards allowed;
+- one or two real same-theme role-players;
+- low density of jackpot staples.
+
+Tier 2 = COHERENT ROGUE
+- recruiter/search engine;
+- useful removal;
+- better curve;
+- meaningful defensive suite;
+- still strongly recognizable character deck.
+
+Tier 3 = OPTIMIZED ROGUE / META-ADJACENT
+- strong staples and interaction;
+- coherent competitive engine;
+- retains signature identity card(s), even if this is a small deckbuilding tax.
+
+AI:
+- first 1–2 duels: Normal/Tough depending on existing ladder naming;
+- node 3 onward: primarily Tough;
+- Act II: Tough/Expert;
+- Act III: Expert;
+- Pegasus: ALWAYS Expert.
+Do not manufacture difficulty by making early AI intentionally nonsensical. Deck quality is the main progression.
+
+18. PEGASUS BOSS PROGRESSION
+----------------------------
+Pegasus is ALWAYS the final boss.
+
+Base / Mastery-0 clear:
+- Pegasus M0 Toon Control candidate list below.
+- Expert AI.
+- High power/staple density while retaining Toon identity.
+
+Next mastery:
+- Pegasus M1 Relinquished Control.
+- Expert AI.
+
+Higher mastery:
+Use EXISTING simulator meta decks by exact IDs/names from engine/data/mazos.json rather than duplicating them.
+At the time of this design, useful existing names include:
+- Goat Control · Worlds 2020
+- Chaos Turbo · Worlds 2020
+- Chaos Control
+- Warrior Goat Control
+- Reasoning Gate OTK
+Additional existing decks may be eligible after repository audit.
+
+Suggested bossMetaPool weighting:
+M2: Chaos Control / Goat Control / Warrior Goat Control
+M3+: Chaos Turbo / Chaos Control / Warrior Goat Control / occasional Reasoning Gate OTK
+Always Expert. Seed determines selection.
+
+19. SAVE / CONTINUE WITHOUT A SERVER
+------------------------------------
+Use browser localStorage for v1. Run state is small JSON and does not justify a backend.
+
+Versioned keys:
+- goat.story.meta.v1
+- goat.story.run.v1
+- goat.story.settings.v1
+
+Persist:
+- schemaVersion
+- run seed
+- deterministic PRNG internal state/counter
+- generated map
+- current node and resolved nodes
+- selected character/starter/mastery/passive
+- Binder card passcodes/IDs
+- active 40–60 Main Deck
+- run Fusion/Extra Binder
+- Star Chips, castleQualified, lost/recoverable chips
+- temporary Camp buffs and remaining duel counters
+- defeated character IDs
+- reward/event history required for determinism
+
+Autosave after EVERY state-changing Story action.
+Also add Export Progress JSON / Import Progress JSON for backup and cross-browser portability.
+Warn that clearing site/browser storage deletes local progress unless exported.
+Do not add IndexedDB unless later requirements exceed localStorage.
+
+20. SEEDED RNG
+--------------
+Every run exposes a human-shareable seed such as DK-7HF82A.
+Use a deterministic serializable PRNG (e.g. xoshiro128** or sfc32); never rely on unseeded Math.random() for
+map, opponent, pack, event or reward generation.
+
+Same seed + same content version + same player choices must reproduce:
+- map
+- encounter variants
+- packs/rewards
+- event rolls
+- boss variant
+
+Include contentVersion in seed/save compatibility logic.
+
+21. UX DIRECTION
+----------------
+Keep the existing duel board for actual duels. Story Mode may have its own game-like shell:
+- Duelist Kingdom map background
+- path/node graph
+- character portrait card on encounters
+- Star Chip glove/progress
+- pack-opening reveal
+- Run Binder / Deck Editor shortcut always visible
+- seed visible/copyable
+- save/continue indicator
+- responsive mobile layout
+
+Do not bury card text. Mobile card inspection must remain readable.
+
+22. BALANCE TARGETS — STARTING TARGETS, NOT PROMISES
+---------------------------------------------------
+Use automated bot simulations only as a tuning signal; they are not a substitute for human playtests.
+
+Desired first-pass player experience:
+- first two Act I fights: competent human target ~65–80% win chance with unmodified starter.
+- late Act I / Act II: ~50–65% depending on route/build.
+- Act III finalist fights: ~40–55%.
+- Pegasus M0 first-attempt against an average successful run: ~30–45%.
+- initial overall full-run clear rate target: roughly 20–35%, then tune from telemetry/playtests.
+- no ordinary 1-of-3 reward where all three candidates are low desirability.
+- successful runs should NOT routinely own every UR power staple before reaching the castle.
+- every generated seed must contain at least one reachable route to 10 Star Chips.
+- target ~8–9 actual duels in a complete run to protect the 30–45 minute goal.
+
+Create a headless/story simulation script that samples thousands of seeds and reports:
+- node distribution
+- combat count
+- theoretical obtainable Star Chips by route
+- pack rarity output
+- duplicate/reroll rates
+- Trader conversion rates
+- number of UR/SR cards entering a typical Binder
+- impossible/deadlocked maps (must be zero)
+- average route length
+
+23. VALIDATION REQUIREMENTS
+---------------------------
+Before Story content is accepted:
+1) Resolve every named card to an exact repository passcode.
+2) Assert it is in goat-pool.json.
+3) Assert legal copies against goat-limites.json.
+4) Reject anime/action-field/nonstandard variants unless explicitly approved and legal.
+5) Validate every candidate deck has 40–60 Main cards.
+6) Validate each enemy Extra/Fusion card exists in the repository.
+7) Validate all pack/reward pools have enough candidates after copy-cap filtering.
+8) Generate a story-validation-report listing missing cards, substitutions and warnings.
+9) Never silently substitute a missing card.
+10) If substitution is necessary, choose a GOAT-legal same-role replacement and record the change.
+
+24. CHARACTER / ENCOUNTER ORDER FOR CONTENT AUTHORING
+-----------------------------------------------------
+Build/validate content in this order:
+1. Yugi starters
+2. Weevil
+3. Rex
+4. Mako
+5. Joey
+6. Mai
+7. PaniK
+8. Bonz
+9. Bandit Keith
+10. Kaiba
+11. Labyrinth Brothers
+12. Pegasus
+
+This is an authoring order, not a forced linear encounter order.
+
+25. CANDIDATE DECKLISTS
+-----------------------
+These lists are designed for Story Mode power progression. They are not claims of historical anime-perfect lists.
+Tier 3 shells intentionally borrow from documented competitive/rogue GOAT construction while preserving
+character signatures.
+
+
+Yugi Starter A — Dark Magician / Spellcaster
+--------------------------------------------
+Main Deck: 40
+MONSTERS
+  2x Dark Magician
+  1x Dark Magician Girl
+  1x Summoned Skull
+  2x Celtic Guardian
+  2x Giant Soldier of Stone
+  2x Mystic Elf
+  1x Kuriboh
+  1x Feral Imp
+  1x Beaver Warrior
+  1x Winged Dragon, Guardian of the Fortress #1
+  2x Skilled Dark Magician
+  1x Kycoo the Ghost Destroyer
+  1x Apprentice Magician
+  1x Magician of Faith
+  1x Old Vindictive Magician
+SPELLS
+  1x Swords of Revealing Light
+  1x Dark Magic Attack
+  1x Thousand Knives
+  1x Book of Secret Arts
+  2x Fissure
+  1x Smashing Ground
+  1x De-Spell
+  1x Stop Defense
+  1x Polymerization
+  1x Book of Moon
+  1x Mystical Space Typhoon
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  1x Magic Jammer
+  1x Spellbinding Circle
+  1x Dust Tornado
+  1x Sakuretsu Armor
+Design note: Anime-forward starter. The good cards are deliberately sparse: Skilled Dark Magician, Kycoo, Apprentice/Magician of Faith, Book of Moon and MST give it a functional spine without making it a finished GOAT deck.
+
+Yugi Starter B — King's Warriors / Magnet Warriors
+--------------------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Gaia The Fierce Knight
+  1x Curse of Dragon
+  1x Buster Blader
+  3x Celtic Guardian
+  1x Obnoxious Celtic Guard
+  1x Big Shield Gardna
+  1x Alpha The Magnet Warrior
+  1x Beta The Magnet Warrior
+  1x Gamma The Magnet Warrior
+  1x Valkyrion the Magna Warrior
+  1x Gazelle the King of Mythical Beasts
+  1x Berfomet
+  1x Marauding Captain
+  1x Mystic Swordsman LV2
+  1x D.D. Assailant
+  2x Giant Soldier of Stone
+  1x Kuriboh
+SPELLS
+  1x Polymerization
+  1x Reinforcement of the Army
+  2x The Warrior Returning Alive
+  2x Fissure
+  1x Smashing Ground
+  1x Book of Moon
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Brain Control
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Magic Jammer
+  1x Bottomless Trap Hole
+EXTRA / FUSION
+  1x Gaia the Dragon Champion
+  1x Chimera the Flying Mythical Beast
+Design note: Anime Warrior/Magnet identity with a small real Warrior toolbox. Gaia/Chimera are starter thematic Fusion options; competitive Fusion targets must still be earned.
+
+Yugi Starter C — Black Luster Ritual / Proto-Chaos
+--------------------------------------------------
+Main Deck: 40
+MONSTERS
+  2x Black Luster Soldier
+  1x Dark Magician
+  1x Kuriboh
+  2x Manju of the Ten Thousand Hands
+  1x Senju of the Thousand Hands
+  1x Sonic Bird
+  2x Shining Angel
+  2x Mystic Tomato
+  1x Skilled White Magician
+  1x Skilled Dark Magician
+  1x Magician of Faith
+  2x Gravekeeper's Spy
+  1x Night Assailant
+  1x Chaos Sorcerer
+  1x Sangan
+SPELLS
+  2x Black Luster Ritual
+  2x Book of Moon
+  1x Nobleman of Crossout
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Enemy Controller
+  1x Premature Burial
+TRAPS
+  2x Trap Hole
+  2x Sakuretsu Armor
+  1x Waboku
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  1x Call of the Haunted
+Design note: Ritual/Light-Dark bridge. No Scapegoat+Metamorphosis at start; that package is progression content.
+
+Weevil T1 — Anime Insects
+-------------------------
+Main Deck: 40
+MONSTERS
+  2x Petit Moth
+  2x Cocoon of Evolution
+  1x Larvae Moth
+  1x Great Moth
+  2x Basic Insect
+  2x Killer Needle
+  2x Gokibore
+  1x Hercules Beetle
+  1x Insect Queen
+  2x Howling Insect
+  2x Insect Knight
+  2x Man-Eater Bug
+SPELLS
+  2x Forest
+  2x Insect Imitation
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Creature Swap
+  1x Stop Defense
+TRAPS
+  3x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  2x DNA Surgery
+
+Weevil T2 — Recruiter Insects
+-----------------------------
+Main Deck: 40
+MONSTERS
+  3x Flying Kamakiri #1
+  3x Howling Insect
+  3x Ultimate Insect LV3
+  2x Ultimate Insect LV5
+  1x Ultimate Insect LV7
+  2x Insect Knight
+  1x Pinch Hopper
+  1x Swarm of Scarabs
+  1x Swarm of Locusts
+  1x Sangan
+  1x Kycoo the Ghost Destroyer
+SPELLS
+  2x Creature Swap
+  2x Insect Imitation
+  1x Nobleman of Crossout
+  2x Smashing Ground
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Book of Moon
+  1x Swords of Revealing Light
+TRAPS
+  3x Sakuretsu Armor
+  2x Widespread Ruin
+  2x Dust Tornado
+  1x Call of the Haunted
+  2x Bottomless Trap Hole
+
+Weevil T3 — Ultimate Insect Competitive
+---------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Breaker the Magical Warrior
+  3x Flying Kamakiri #1
+  2x Howling Insect
+  3x Kycoo the Ghost Destroyer
+  1x Pinch Hopper
+  1x Sangan
+  1x Twin-Headed Behemoth
+  3x Ultimate Insect LV3
+  3x Ultimate Insect LV5
+  1x Ultimate Insect LV7
+SPELLS
+  2x Creature Swap
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+TRAPS
+  1x Call of the Haunted
+  1x Dust Tornado
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+  3x Widespread Ruin
+Design note: Based on the documented GOAT Ultimate Insect shell, retaining the character identity while adding real power cards.
+
+Rex T1 — Anime Dinosaurs
+------------------------
+Main Deck: 40
+MONSTERS
+  3x Two-Headed King Rex
+  3x Crawling Dragon #2
+  3x Uraby
+  2x Sword Arm of Dragon
+  2x Megazowler
+  2x Trakodon
+  1x Serpent Night Dragon
+  1x Red-Eyes Black Dragon
+  1x Hyper Hammerhead
+  2x Gilasaurus
+SPELLS
+  2x Wasteland
+  2x Raise Body Heat
+  2x Fissure
+  1x Smashing Ground
+  1x Stop Defense
+  1x Swords of Revealing Light
+  1x The Reliable Guardian
+TRAPS
+  3x Trap Hole
+  2x Waboku
+  2x Reinforcements
+  2x Sakuretsu Armor
+  1x Dust Tornado
+
+Rex T2 — Dinosaur Beatdown
+--------------------------
+Main Deck: 40
+MONSTERS
+  2x Two-Headed King Rex
+  3x Hyper Hammerhead
+  3x Gilasaurus
+  1x Black Tyranno
+  1x Dark Driceratops
+  1x Mad Sword Beast
+  3x Giant Rat
+  2x Berserk Gorilla
+  1x Exiled Force
+  1x Injection Fairy Lily
+  1x Serpent Night Dragon
+SPELLS
+  2x Creature Swap
+  3x Smashing Ground
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  2x Book of Moon
+  1x Swords of Revealing Light
+TRAPS
+  3x Sakuretsu Armor
+  2x Widespread Ruin
+  2x Dust Tornado
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+
+Rex T3 — Earth Dino Aggro
+-------------------------
+Main Deck: 40
+MONSTERS
+  3x Giant Rat
+  3x Hyper Hammerhead
+  3x Gilasaurus
+  1x Dark Driceratops
+  1x Mad Sword Beast
+  1x Black Tyranno
+  1x Serpent Night Dragon
+  3x Berserk Gorilla
+  1x Injection Fairy Lily
+  1x Exiled Force
+  1x Breaker the Magical Warrior
+SPELLS
+  1x Pot of Greed
+  1x Graceful Charity
+  1x Delinquent Duo
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  1x Snatch Steal
+  1x Premature Burial
+  2x Nobleman of Crossout
+  2x Creature Swap
+  2x Smashing Ground
+TRAPS
+  1x Mirror Force
+  1x Ring of Destruction
+  1x Torrential Tribute
+  2x Sakuretsu Armor
+  2x Trap Dustshoot
+  1x Dust Tornado
+
+Mako T1 — Anime Sea Duelist
+---------------------------
+Main Deck: 40
+MONSTERS
+  2x Great White
+  2x Jellyfish
+  2x Kairyu-Shin
+  2x Fiend Kraken
+  2x Giant Red Seasnake
+  1x Flying Fish
+  1x Amphibian Beast
+  2x The Legendary Fisherman
+  3x Mother Grizzly
+  1x Yomi Ship
+  1x Mermaid Knight
+  1x Abyss Soldier
+SPELLS
+  2x Umi
+  1x Power of Kaishin
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Salvage
+  1x Book of Moon
+  1x Stop Defense
+TRAPS
+  2x Tornado Wall
+  2x Trap Hole
+  2x Waboku
+  1x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+Design note: Fortress Whale/Oath intentionally omitted because the current simulator data must be treated as authoritative; Claude must validate every final card against goat-pool.json.
+
+Mako T2 — Legendary Ocean
+-------------------------
+Main Deck: 40
+MONSTERS
+  3x Mother Grizzly
+  3x Mermaid Knight
+  2x Abyss Soldier
+  1x Yomi Ship
+  1x The Legendary Fisherman
+  1x Levia-Dragon - Daedalus
+  2x Amphibious Bugroth MK-3
+  1x Revival Jam
+  1x Sinister Serpent
+  1x Tribe-Infecting Virus
+  1x Sangan
+  1x Giga Gagagigo
+SPELLS
+  3x A Legendary Ocean
+  2x Terraforming
+  2x Salvage
+  2x Book of Moon
+  1x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Smashing Ground
+  1x Premature Burial
+TRAPS
+  3x Sakuretsu Armor
+  2x Solemn Judgment
+  1x Dust Tornado
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+
+Mako T3 — Water Aggro Competitive
+---------------------------------
+Main Deck: 40
+MONSTERS
+  2x Abyss Soldier
+  1x Breaker the Magical Warrior
+  2x Lekunga
+  1x The Legendary Fisherman
+  1x Levia-Dragon - Daedalus
+  3x Mermaid Knight
+  3x Mother Grizzly
+  1x Revival Jam
+  1x Sangan
+  1x Sinister Serpent
+  1x Tribe-Infecting Virus
+  1x Yomi Ship
+SPELLS
+  3x A Legendary Ocean
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+  2x Nobleman of Crossout
+  1x Terraforming
+TRAPS
+  1x Call of the Haunted
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+  3x Solemn Judgment
+Design note: GOAT Water Aggro-derived shell with The Legendary Fisherman retained as Mako's signature tax.
+
+Joey T1 — Anime Red-Eyes / Warriors
+-----------------------------------
+Main Deck: 40
+MONSTERS
+  1x Red-Eyes Black Dragon
+  2x Axe Raider
+  1x Battle Warrior
+  1x Time Wizard
+  1x Baby Dragon
+  1x Copycat
+  2x Swordsman of Landstar
+  2x Gearfried the Iron Knight
+  1x Panther Warrior
+  2x Goblin Attack Force
+  1x Little-Winguard
+  1x Alligator's Sword
+  1x Black Dragon's Chick
+  1x D.D. Assailant
+  1x Marauding Captain
+SPELLS
+  1x Polymerization
+  1x Scapegoat
+  1x Shield & Sword
+  1x Graceful Dice
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x The Warrior Returning Alive
+  1x Reinforcement of the Army
+  1x Book of Moon
+TRAPS
+  1x Skull Dice
+  2x Kunai with Chain
+  1x Fairy Box
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+EXTRA / FUSION
+  1x Thousand Dragon
+  1x Giltia the D. Knight
+
+Joey T2 — Red-Eyes Warrior
+--------------------------
+Main Deck: 40
+MONSTERS
+  2x Red-Eyes Black Dragon
+  2x Black Dragon's Chick
+  2x Mystic Tomato
+  2x Gearfried the Iron Knight
+  2x Blade Knight
+  2x D.D. Assailant
+  2x Marauding Captain
+  1x Exiled Force
+  1x Sangan
+  1x Kycoo the Ghost Destroyer
+  2x Goblin Attack Force
+  1x Time Wizard
+SPELLS
+  1x Reinforcement of the Army
+  2x Book of Moon
+  2x Smashing Ground
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Scapegoat
+  1x Metamorphosis
+  1x The Warrior Returning Alive
+TRAPS
+  3x Sakuretsu Armor
+  2x Dust Tornado
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+EXTRA / FUSION
+  2x Thousand-Eyes Restrict
+  1x Dark Balter the Terrible
+  1x Ryu Senshi
+
+Joey T3 — Red-Eyes Competitive
+------------------------------
+Main Deck: 40
+MONSTERS
+  2x Black Dragon's Chick
+  1x Breaker the Magical Warrior
+  1x Cyber-Stein
+  3x Fusilier Dragon, the Dual-Mode Beast
+  2x Kycoo the Ghost Destroyer
+  3x Mirage Dragon
+  3x Mystic Tomato
+  1x Newdoria
+  1x Sangan
+  3x Red-Eyes Black Dragon
+SPELLS
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Inferno Fire Blast
+  2x Metamorphosis
+  1x Mystical Space Typhoon
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+TRAPS
+  1x Call of the Haunted
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+  2x Widespread Ruin
+EXTRA / FUSION
+  2x Thousand-Eyes Restrict
+  1x Dark Balter the Terrible
+  1x Fiend Skull Dragon
+  1x Ryu Senshi
+  1x King Dragun
+  1x Gatling Dragon
+  1x Master of Oz
+Design note: Derived from a documented GOAT Red-Eyes rogue shell; signature Red-Eyes package is retained.
+
+Mai T1 — Anime Harpies
+----------------------
+Main Deck: 40
+MONSTERS
+  3x Harpie Lady
+  2x Harpie Lady Sisters
+  1x Harpie's Pet Dragon
+  2x Birdface
+  2x Flying Kamakiri #1
+  1x Cyber Falcon
+  1x Faith Bird
+  2x Skull Red Bird
+  2x Sonic Duck
+  1x Twin-Headed Behemoth
+  1x Lady Ninja Yae
+  1x Silpheed
+  1x Kurama
+SPELLS
+  2x Elegant Egotist
+  2x Cyber Shield
+  1x Mountain
+  1x Rising Air Current
+  2x Fissure
+  1x Smashing Ground
+  1x Mystical Space Typhoon
+  1x Swords of Revealing Light
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  1x Windstorm of Etaqua
+
+Mai T2 — Harpie Tempo
+---------------------
+Main Deck: 40
+MONSTERS
+  3x Birdface
+  3x Flying Kamakiri #1
+  3x Harpie Lady 1
+  1x Harpie Lady Sisters
+  1x Lady Ninja Yae
+  2x Silpheed
+  1x Twin-Headed Behemoth
+  1x Sangan
+  1x Breaker the Magical Warrior
+  1x Harpie's Pet Dragon
+SPELLS
+  2x Elegant Egotist
+  2x Harpies' Hunting Ground
+  2x Book of Moon
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Smashing Ground
+  1x Triangle Ecstasy Spark
+TRAPS
+  3x Sakuretsu Armor
+  2x Dust Tornado
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+  1x Widespread Ruin
+  2x Solemn Judgment
+
+Mai T3 — Harpie Competitive
+---------------------------
+Main Deck: 40
+MONSTERS
+  3x Birdface
+  1x Breaker the Magical Warrior
+  3x Flying Kamakiri #1
+  3x Harpie Lady 1
+  2x Harpie Lady Sisters
+  1x Lady Ninja Yae
+  1x Sangan
+  3x Silpheed
+  1x Twin-Headed Behemoth
+SPELLS
+  1x Delinquent Duo
+  3x Elegant Egotist
+  1x Graceful Charity
+  3x Harpies' Hunting Ground
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+  1x Triangle Ecstasy Spark
+TRAPS
+  1x Call of the Haunted
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+Design note: GOAT Harpie rogue shell. Exact card legality must still be resolved to repository passcodes.
+
+PaniK T1 — Anime Darkness
+-------------------------
+Main Deck: 40
+MONSTERS
+  1x Castle of Dark Illusions
+  2x King of Yamimakai
+  3x La Jinn the Mystical Genie of the Lamp
+  2x Dark Chimera
+  2x Reaper of the Cards
+  2x Metal Guardian
+  2x Dark King of the Abyss
+  1x Summoned Skull
+  2x Giant Germ
+  1x Slate Warrior
+  1x Night Assailant
+  1x Newdoria
+SPELLS
+  2x Yami
+  2x Dark Energy
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Book of Moon
+  1x Stop Defense
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  1x Magic Jammer
+EXTRA / FUSION
+  1x Barox
+
+PaniK T2 — Fiend Pressure
+-------------------------
+Main Deck: 40
+MONSTERS
+  1x Castle of Dark Illusions
+  1x King of Yamimakai
+  1x Dark Necrofear
+  1x Dark Ruler Ha Des
+  3x Giant Germ
+  2x Giant Orc
+  3x Slate Warrior
+  1x Night Assailant
+  1x Sangan
+  1x Newdoria
+  1x Kycoo the Ghost Destroyer
+  1x Archfiend Soldier
+  1x Breaker the Magical Warrior
+SPELLS
+  2x Book of Moon
+  2x Smashing Ground
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Swords of Revealing Light
+  1x Creature Swap
+TRAPS
+  3x Sakuretsu Armor
+  2x Widespread Ruin
+  2x Solemn Judgment
+  1x Call of the Haunted
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  2x Trap Dustshoot
+
+PaniK T3 — Fiend Aggro Competitive
+----------------------------------
+Main Deck: 40
+MONSTERS
+  1x Breaker the Magical Warrior
+  2x Dark Necrofear
+  1x Dark Ruler Ha Des
+  3x Giant Germ
+  2x Giant Orc
+  1x Castle of Dark Illusions
+  2x Night Assailant
+  1x Sangan
+  3x Slate Warrior
+  1x Tribe-Infecting Virus
+  1x Twin-Headed Wolf
+  1x Archfiend Soldier
+SPELLS
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+  2x Nobleman of Crossout
+TRAPS
+  1x Call of the Haunted
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+  3x Solemn Judgment
+  3x Widespread Ruin
+
+Bonz T1 — Anime Zombies
+-----------------------
+Main Deck: 40
+MONSTERS
+  2x Pumpking the King of Ghosts
+  3x Dragon Zombie
+  3x Armored Zombie
+  3x Clown Zombie
+  2x The Snake Hair
+  2x Master Kyonshee
+  1x Spirit Reaper
+  2x Pyramid Turtle
+  1x Vampire Lord
+  1x Ryu Kokki
+  1x Des Lacooda
+SPELLS
+  2x Violet Crystal
+  1x Book of Life
+  1x Call of the Mummy
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Book of Moon
+  1x Mystical Space Typhoon
+TRAPS
+  1x Call of the Haunted
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+
+Bonz T2 — Zombie Recruiter
+--------------------------
+Main Deck: 40
+MONSTERS
+  1x Pumpking the King of Ghosts
+  3x Pyramid Turtle
+  2x Giant Rat
+  2x Ryu Kokki
+  1x Vampire Lord
+  1x Spirit Reaper
+  2x Regenerating Mummy
+  1x Sangan
+  1x Exiled Force
+  1x Injection Fairy Lily
+  1x Kycoo the Ghost Destroyer
+  1x Breaker the Magical Warrior
+SPELLS
+  3x Book of Life
+  2x Creature Swap
+  2x Book of Moon
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Smashing Ground
+TRAPS
+  3x Sakuretsu Armor
+  2x Dust Tornado
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  2x Royal Decree
+  1x Torrential Tribute
+  1x Widespread Ruin
+
+Bonz T3 — Zombie Aggro Competitive
+----------------------------------
+Main Deck: 40
+MONSTERS
+  2x Berserk Gorilla
+  1x Pumpking the King of Ghosts
+  3x Giant Rat
+  3x Kycoo the Ghost Destroyer
+  3x Pyramid Turtle
+  3x Ryu Kokki
+  1x Breaker the Magical Warrior
+  1x Exiled Force
+  1x Injection Fairy Lily
+  1x Tribe-Infecting Virus
+  1x Vampire Lord
+SPELLS
+  3x Book of Life
+  3x Tribute to the Doomed
+  2x Creature Swap
+  2x Nobleman of Crossout
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+TRAPS
+  3x Royal Decree
+  1x Call of the Haunted
+Design note: Aggressive Zombie shell based on documented recruiter/Book of Life principles.
+
+Bandit Keith T1 — Anime Machines
+--------------------------------
+Main Deck: 40
+MONSTERS
+  2x Barrel Dragon
+  2x Slot Machine
+  2x Pendulum Machine
+  2x Launcher Spider
+  3x Mechanicalchaser
+  2x UFO Turtle
+  2x X-Head Cannon
+  1x Machine King
+  1x Jinzo
+  1x Blast Sphere
+  1x Dekoichi the Battlechanted Locomotive
+  1x Reflect Bounder
+SPELLS
+  2x 7 Completed
+  2x Machine Conversion Factory
+  2x Fissure
+  1x Smashing Ground
+  1x Stop Defense
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Limiter Removal
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  1x Magic Jammer
+
+Bandit Keith T2 — Barrel Machine Aggro
+--------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Barrel Dragon
+  1x Blowback Dragon
+  1x Jinzo
+  3x Dekoichi the Battlechanted Locomotive
+  3x Mechanicalchaser
+  3x X-Head Cannon
+  3x UFO Turtle
+  1x Reflect Bounder
+  1x Breaker the Magical Warrior
+  1x Sangan
+SPELLS
+  2x Limiter Removal
+  2x Book of Moon
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Smashing Ground
+  1x Heavy Storm
+TRAPS
+  3x Sakuretsu Armor
+  2x Solemn Judgment
+  2x Widespread Ruin
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+  1x Dust Tornado
+  1x Trap Dustshoot
+
+Bandit Keith T3 — Machine Aggro Competitive
+-------------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Barrel Dragon
+  1x Breaker the Magical Warrior
+  3x Dekoichi the Battlechanted Locomotive
+  2x Drillago
+  1x Reflect Bounder
+  1x Sangan
+  3x UFO Turtle
+  3x Mechanicalchaser
+  3x X-Head Cannon
+SPELLS
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  3x Limiter Removal
+  1x Mystical Space Typhoon
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  1x Premature Burial
+  1x Snatch Steal
+TRAPS
+  1x Call of the Haunted
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Sakuretsu Armor
+  3x Solemn Judgment
+  1x Widespread Ruin
+Design note: Machine Aggro-derived shell with Barrel Dragon kept as Keith's signature.
+
+Kaiba T1 — Anime Blue-Eyes
+--------------------------
+Main Deck: 40
+MONSTERS
+  3x Blue-Eyes White Dragon
+  2x Battle Ox
+  3x La Jinn the Mystical Genie of the Lamp
+  1x Judge Man
+  1x Hitotsu-Me Giant
+  1x Ryu-Kishin Powered
+  1x Swordstalker
+  2x Lord of D.
+  2x Luster Dragon
+  1x Kaiser Sea Horse
+  2x Kaibaman
+  1x Spear Dragon
+SPELLS
+  2x The Flute of Summoning Dragon
+  1x Burst Stream of Destruction
+  1x Polymerization
+  2x Fissure
+  1x Smashing Ground
+  1x Swords of Revealing Light
+  1x Mystical Space Typhoon
+  1x Book of Moon
+  1x Enemy Controller
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Dust Tornado
+  1x Bottomless Trap Hole
+  1x Magic Jammer
+EXTRA / FUSION
+  1x Rabid Horseman
+
+Kaiba T2 — Blue-Eyes Dragon Control
+-----------------------------------
+Main Deck: 40
+MONSTERS
+  3x Blue-Eyes White Dragon
+  2x Kaibaman
+  3x Shining Angel
+  2x Mirage Dragon
+  2x Luster Dragon
+  2x Fusilier Dragon, the Dual-Mode Beast
+  1x Lord of D.
+  1x D.D. Warrior Lady
+  1x Exiled Force
+  1x Sangan
+  1x Breaker the Magical Warrior
+SPELLS
+  2x Reinforcement of the Army
+  2x Metamorphosis
+  2x Book of Moon
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Burst Stream of Destruction
+  1x My Body as a Shield
+TRAPS
+  3x Sakuretsu Armor
+  2x Solemn Judgment
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+  1x Compulsory Evacuation Device
+EXTRA / FUSION
+  2x Thousand-Eyes Restrict
+  1x Dark Balter the Terrible
+  1x Ryu Senshi
+  1x Dark Blade the Dragon Knight
+  1x King Dragun
+
+Kaiba T3 — Blue-Eyes Competitive
+--------------------------------
+Main Deck: 40
+MONSTERS
+  1x Black Luster Soldier - Envoy of the Beginning
+  1x Breaker the Magical Warrior
+  1x D.D. Warrior Lady
+  1x Exiled Force
+  3x Fusilier Dragon, the Dual-Mode Beast
+  2x Kaibaman
+  3x Mirage Dragon
+  1x Sangan
+  3x Shining Angel
+  3x Blue-Eyes White Dragon
+SPELLS
+  1x Burst Stream of Destruction
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  2x Metamorphosis
+  1x My Body as a Shield
+  1x Mystical Space Typhoon
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  1x Premature Burial
+  2x Reinforcement of the Army
+  1x Snatch Steal
+TRAPS
+  1x Call of the Haunted
+  2x Compulsory Evacuation Device
+  1x Mirror Force
+  1x Ring of Destruction
+  1x Torrential Tribute
+EXTRA / FUSION
+  3x Thousand-Eyes Restrict
+  2x Dark Balter the Terrible
+  2x Fiend Skull Dragon
+  1x Ryu Senshi
+  1x Dark Blade the Dragon Knight
+  1x Reaper on the Nightmare
+  1x Dark Flare Knight
+  1x The Last Warrior from Another Planet
+  1x King Dragun
+  1x Gatling Dragon
+  1x Master of Oz
+Design note: GOAT Blue-Eyes rogue/Chaos hybrid direction; Blue-Eyes remains the identity tax, but the shell is legitimately dangerous.
+
+Labyrinth Brothers T1 — Anime Labyrinth
+---------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Gate Guardian
+  1x Sanga of the Thunder
+  1x Kazejin
+  1x Suijin
+  3x Labyrinth Wall
+  2x Wall Shadow
+  2x Shadow Ghoul
+  2x Jirai Gumo
+  2x Dungeon Worm
+  2x Monster Tamer
+  1x Stone Ogre Grotto
+  1x Ryu-Kishin Powered
+  1x Giant Soldier of Stone
+  1x Cannon Soldier
+SPELLS
+  2x Magical Labyrinth
+  2x Fissure
+  1x Smashing Ground
+  1x Stop Defense
+  1x Swords of Revealing Light
+  1x Book of Moon
+  1x Mystical Space Typhoon
+  1x Polymerization
+TRAPS
+  2x Trap Hole
+  2x Waboku
+  2x Sakuretsu Armor
+  1x Bottomless Trap Hole
+  1x Dust Tornado
+  1x Magic Jammer
+
+Labyrinth Brothers T2 — Guardian Wall Control
+---------------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Gate Guardian
+  1x Sanga of the Thunder
+  1x Kazejin
+  1x Suijin
+  2x Labyrinth Wall
+  2x Wall Shadow
+  3x Gravekeeper's Spy
+  2x Giant Soldier of Stone
+  1x Big Shield Gardna
+  1x Legendary Jujitsu Master
+  2x Fusilier Dragon, the Dual-Mode Beast
+  1x Sangan
+  1x Breaker the Magical Warrior
+SPELLS
+  2x Monster Gate
+  2x Reasoning
+  2x Book of Moon
+  2x Nobleman of Crossout
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Scapegoat
+  1x Metamorphosis
+TRAPS
+  3x Sakuretsu Armor
+  2x Solemn Judgment
+  1x Call of the Haunted
+  1x Bottomless Trap Hole
+  1x Torrential Tribute
+  1x Dust Tornado
+EXTRA / FUSION
+  2x Thousand-Eyes Restrict
+  1x Dark Balter the Terrible
+  1x Ryu Senshi
+  1x King Dragun
+
+Labyrinth Brothers T3 — Reasoning Gate Guardians
+------------------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Gate Guardian
+  1x Sanga of the Thunder
+  1x Kazejin
+  1x Suijin
+  3x Fusilier Dragon, the Dual-Mode Beast
+  1x Dark Magician of Chaos
+  1x Jinzo
+  1x Sacred Phoenix of Nephthys
+  1x Airknight Parshath
+  1x Breaker the Magical Warrior
+  1x Sangan
+  2x Gravekeeper's Spy
+  1x Magician of Faith
+  1x Sinister Serpent
+SPELLS
+  3x Reasoning
+  3x Monster Gate
+  2x Metamorphosis
+  1x Scapegoat
+  1x Pot of Greed
+  1x Graceful Charity
+  1x Heavy Storm
+  1x Mystical Space Typhoon
+  1x Premature Burial
+  1x Snatch Steal
+  1x Nobleman of Crossout
+  1x Book of Moon
+TRAPS
+  1x Mirror Force
+  1x Ring of Destruction
+  1x Torrential Tribute
+  1x Call of the Haunted
+  2x Solemn Judgment
+EXTRA / FUSION
+  3x Thousand-Eyes Restrict
+  2x Dark Balter the Terrible
+  2x Fiend Skull Dragon
+  1x Ryu Senshi
+  1x Dark Blade the Dragon Knight
+  1x Reaper on the Nightmare
+  1x Dark Flare Knight
+  1x The Last Warrior from Another Planet
+  1x King Dragun
+  1x Gatling Dragon
+  1x Master of Oz
+
+Pegasus M0 Boss — Toon Control
+------------------------------
+Main Deck: 40
+MONSTERS
+  1x Blue-Eyes Toon Dragon
+  1x Breaker the Magical Warrior
+  3x Gravekeeper's Spy
+  3x Nimble Momonga
+  1x Sangan
+  3x Toon Gemini Elf
+  3x Toon Summoned Skull
+SPELLS
+  1x Delinquent Duo
+  1x Graceful Charity
+  3x Magic Reflector
+  2x Metamorphosis
+  1x Mystical Space Typhoon
+  1x Nobleman of Crossout
+  1x Pot of Greed
+  3x Scapegoat
+  1x Snatch Steal
+  3x Toon Table of Contents
+  3x Toon World
+TRAPS
+  1x Mirror Force
+  1x Ring of Destruction
+  3x Royal Decree
+EXTRA / FUSION
+  3x Thousand-Eyes Restrict
+  2x Dark Balter the Terrible
+  2x Fiend Skull Dragon
+  1x Ryu Senshi
+  1x Dark Blade the Dragon Knight
+  1x Reaper on the Nightmare
+  1x Dark Flare Knight
+  1x The Last Warrior from Another Planet
+  1x King Dragun
+  1x Gatling Dragon
+  1x Master of Oz
+Design note: Base clear final boss: strong Toon shell with GOAT power cards. Always Expert AI.
+
+Pegasus M1 Boss — Relinquished Control
+--------------------------------------
+Main Deck: 40
+MONSTERS
+  1x Black Luster Soldier - Envoy of the Beginning
+  1x Breaker the Magical Warrior
+  2x Magician of Faith
+  3x Manju of the Ten Thousand Hands
+  1x Sangan
+  1x Senju of the Thousand Hands
+  1x Sinister Serpent
+  1x Sonic Bird
+  1x Tribe-Infecting Virus
+  3x Tsukuyomi
+  2x Relinquished
+SPELLS
+  2x Black Illusion Ritual
+  1x Book of Moon
+  1x Delinquent Duo
+  1x Graceful Charity
+  1x Heavy Storm
+  3x Metamorphosis
+  2x Nobleman of Crossout
+  1x Pot of Greed
+  3x Scapegoat
+  1x Snatch Steal
+TRAPS
+  1x Mirror Force
+  1x Ring of Destruction
+  2x Sakuretsu Armor
+  3x Solemn Judgment
+EXTRA / FUSION
+  3x Thousand-Eyes Restrict
+  2x Dark Balter the Terrible
+  2x Fiend Skull Dragon
+  1x Ryu Senshi
+  1x Dark Blade the Dragon Knight
+  1x Reaper on the Nightmare
+  1x Dark Flare Knight
+  1x The Last Warrior from Another Planet
+  1x King Dragun
+  1x Gatling Dragon
+  1x Master of Oz
+Design note: Second mastery boss: Relinquished/Goat control. Always Expert AI.
+
+26. INTERNAL COUNT/COPY-CAP CHECK
+---------------------------------
+Yugi Starter A — Dark Magician / Spellcaster: OK (40 main; copy limits internally checked)
+Yugi Starter B — King's Warriors / Magnet Warriors: OK (40 main; copy limits internally checked)
+Yugi Starter C — Black Luster Ritual / Proto-Chaos: OK (40 main; copy limits internally checked)
+Weevil T1 — Anime Insects: OK (40 main; copy limits internally checked)
+Weevil T2 — Recruiter Insects: OK (40 main; copy limits internally checked)
+Weevil T3 — Ultimate Insect Competitive: OK (40 main; copy limits internally checked)
+Rex T1 — Anime Dinosaurs: OK (40 main; copy limits internally checked)
+Rex T2 — Dinosaur Beatdown: OK (40 main; copy limits internally checked)
+Rex T3 — Earth Dino Aggro: OK (40 main; copy limits internally checked)
+Mako T1 — Anime Sea Duelist: OK (40 main; copy limits internally checked)
+Mako T2 — Legendary Ocean: OK (40 main; copy limits internally checked)
+Mako T3 — Water Aggro Competitive: OK (40 main; copy limits internally checked)
+Joey T1 — Anime Red-Eyes / Warriors: OK (40 main; copy limits internally checked)
+Joey T2 — Red-Eyes Warrior: OK (40 main; copy limits internally checked)
+Joey T3 — Red-Eyes Competitive: OK (40 main; copy limits internally checked)
+Mai T1 — Anime Harpies: OK (40 main; copy limits internally checked)
+Mai T2 — Harpie Tempo: OK (40 main; copy limits internally checked)
+Mai T3 — Harpie Competitive: OK (40 main; copy limits internally checked)
+PaniK T1 — Anime Darkness: OK (40 main; copy limits internally checked)
+PaniK T2 — Fiend Pressure: OK (40 main; copy limits internally checked)
+PaniK T3 — Fiend Aggro Competitive: OK (40 main; copy limits internally checked)
+Bonz T1 — Anime Zombies: OK (40 main; copy limits internally checked)
+Bonz T2 — Zombie Recruiter: OK (40 main; copy limits internally checked)
+Bonz T3 — Zombie Aggro Competitive: OK (40 main; copy limits internally checked)
+Bandit Keith T1 — Anime Machines: OK (40 main; copy limits internally checked)
+Bandit Keith T2 — Barrel Machine Aggro: OK (40 main; copy limits internally checked)
+Bandit Keith T3 — Machine Aggro Competitive: OK (40 main; copy limits internally checked)
+Kaiba T1 — Anime Blue-Eyes: OK (40 main; copy limits internally checked)
+Kaiba T2 — Blue-Eyes Dragon Control: OK (40 main; copy limits internally checked)
+Kaiba T3 — Blue-Eyes Competitive: OK (40 main; copy limits internally checked)
+Labyrinth Brothers T1 — Anime Labyrinth: OK (40 main; copy limits internally checked)
+Labyrinth Brothers T2 — Guardian Wall Control: OK (40 main; copy limits internally checked)
+Labyrinth Brothers T3 — Reasoning Gate Guardians: OK (40 main; copy limits internally checked)
+Pegasus M0 Boss — Toon Control: OK (40 main; copy limits internally checked)
+Pegasus M1 Boss — Relinquished Control: OK (40 main; copy limits internally checked)
+
+27. COMPETITIVE RESEARCH SYNTHESIS — WHY THE LOOT TABLE IS BUILT THIS WAY
+------------------------------------------------------------------------
+This section explains the competitive logic behind the reward design. It is not intended to freeze the format
+into one historical decklist; it distills recurring principles from modern Goat play and documented rogue decks.
+
+A. THE 2026 COMPETITIVE CORE
+- GGP Ludwigshafen 2026 drew 202 players. Coverage explicitly describes Chaos Control as resurging in response
+  to a metagame shaped heavily by Chaos Turbo and Warrior.
+- GFCEU 2026 reported a Top 8 consisting entirely of Chaos Control, Warrior and Chaos Turbo, while the Top 16
+  still contained less-standard strategies such as Gumo, SWAG Cat and Soul Control.
+- GGP Buenos Aires 2026 was won by Chaos Turbo in a 134-player field; another top-cut list blended Chaos Turbo
+  and Chaos Control concepts with Scapegoat/Metamorphosis.
+Design implication:
+  The Story Mode's strongest generic rewards must support the fundamental GOAT axes of card advantage,
+  flexible removal, LIGHT/DARK conversion, Warrior pressure and Goat/Metamorphosis control. However, a run
+  should not simply hand the player a completed Chaos deck.
+
+B. "STAPLE" DOES NOT MEAN "ALWAYS MAIN-DECKED"
+- GoatFormat strategy material explicitly discusses cards such as Book of Moon, Heavy Storm, Mystical Space
+  Typhoon, Nobleman of Crossout, Scapegoat, Snatch Steal, Call of the Haunted, Dust Tornado, Mirror Force and
+  Sakuretsu Armor as powerful cards that can nevertheless be sided out in particular matchups.
+- Chaos Turbo discussion notes that even cards commonly regarded as staples, such as MST or Mirror Force, can
+  be omitted by successful lists.
+Design implication:
+  Story rarity should measure expected run value, not "must play in every deck." A large reward-worthy pool
+  is healthier than a tiny list of automatic inclusions.
+
+C. SCAPEGOAT / METAMORPHOSIS IS AN ENGINE, NOT TWO ISOLATED CARDS
+- Goat Control is fundamentally associated with Scapegoat + Metamorphosis into Thousand-Eyes Restrict.
+- Chaos Control demonstrates that the package can be transplanted into a LIGHT/DARK shell.
+- Fusion guides show that Metamorphosis creates a whole level-dependent toolbox: Dark Balter, Fiend Skull
+  Dragon, Ryu Senshi, Last Warrior, Gatling Dragon and others.
+Design implication:
+  Main-deck and Fusion rewards must talk to one another. The game should recognize when Meta has no useful
+  target and increase compatible Fusion weighting, rather than presenting dead "premium" loot.
+
+D. CHAOS TURBO SHOWS WHY ENGINE CARDS CAN BE AS EXCITING AS POWER SPELLS
+- Thunder Dragon, Night Assailant, Dekoichi/Magical Merchant, Card Destruction and discard traps create a
+  coherent value engine that enables Chaos monsters.
+Design implication:
+  Thunder Dragon or Night Assailant should not be valued like random filler. They belong in strategy-aware
+  reward tables even though they are not universal staples.
+
+E. RECRUITERS ARE A MAJOR ROGUELIKE BRIDGE
+- Documented Zombie, WATER, Insect, Harpie/WIND, Dragon and Earth shells repeatedly use recruiters such as
+  Pyramid Turtle, Mother Grizzly, Flying Kamakiri #1, Howling Insect, Shining Angel, Mystic Tomato, Giant Rat
+  and UFO Turtle.
+Design implication:
+  Recruiters are excellent mid-tier rewards: useful immediately, identity-forming, and capable of pulling the
+  player toward a new strategy without needing one specific jackpot.
+
+F. ROGUE SUCCESS IS REAL, NOT PURE ANIME FANTASY
+- Modern coverage has documented WATER, Earth, Machine/XYZ, Blue-Eyes/Dragon and other non-core strategies in
+  large events.
+- Ben Kei OTK has historical success and a modernized version has continued to receive attention; its deck
+  illustrates how searchers, stall and Equip cards create a legitimate alternate win route.
+Design implication:
+  Packs should contain credible build-around cards and not merely cosmetic anime references. "Weird run"
+  should mean a coherent rogue engine, not a deck made from bad cards.
+
+G. CHARACTER TIER DESIGN
+Tier 1 intentionally tolerates anime inefficiency.
+Tier 2 borrows proven structural ideas: recruiters, searchable engines, reliable battle/removal traps.
+Tier 3 can borrow heavily from documented rogue shells and the format's true power package, but keeps a visible
+character signature even when that signature is a deckbuilding tax.
+
+H. REWARD PSYCHOLOGY
+The strongest dopamine moments should come from several different categories:
+- raw card advantage jackpot: Pot of Greed / Graceful Charity;
+- flexible removal/tempo jackpot: Mirror Force / Ring / Torrential / Snatch;
+- engine completion: Scapegoat + Metamorphosis + Thousand-Eyes Restrict;
+- strategy unlock: Chaos Sorcerer/BLS after LIGHT-DARK density becomes real;
+- tribal upgrade: Abyss Soldier, Pyramid Turtle, Limiter Removal, Kycoo, ROTA, etc.;
+- Fusion toolbox completion.
+This makes "one more node" attractive without requiring every reward to be an objectively broken Limited card.
+
+28. SOURCE INDEX USED FOR THIS DESIGN
+-------------------------------------
+Project / source of truth:
+- https://github.com/circlenline/goat-format-simulator
+- https://raw.githubusercontent.com/circlenline/goat-format-simulator/main/engine/data/goat-pool.json
+- https://raw.githubusercontent.com/circlenline/goat-format-simulator/main/engine/data/goat-limites.json
+- https://raw.githubusercontent.com/circlenline/goat-format-simulator/main/engine/data/pool_texts.json
+- https://raw.githubusercontent.com/circlenline/goat-format-simulator/main/engine/data/mazos.json
+
+Format / rules / card pool:
+- https://www.goatformat.com/home/card-pool
+- https://www.goatformat.com/rules.html
+
+Core strategy:
+- https://www.goatformat.com/home/goat-control
+- https://www.goatformat.com/chaos-control.html
+- https://www.goatformat.com/chaos-turbo.html
+- https://www.goatformat.com/home/thunder-dragon-chaos
+- https://www.goatformat.com/home/fusions-in-goat-format
+- https://www.goatformat.com/home/archives/11-2018
+- https://www.goatformat.com/home/four-steps-for-better-side-decking-in-goat-format
+
+Rogue / thematic research:
+- GoatFormat.com deck pages and deck-tech coverage for Zombies, Water Aggro/Water Return, Ultimate Insect,
+  Harpies, Machine/XYZ, Earth Aggro, Red-Eyes and Blue-Eyes/Dragon strategies.
+- https://www.goatformat.com/home/zombies
+- https://www.goatformat.com/ben-kei-otk.html
+- https://www.goatformat.com/home/goat-format-championship-23-deck-tech-jeremy-crespins-blue-eyes-turbo
+- https://www.goatformat.com/home/goat-format-championship-22-deck-tech-alephya2s-dragon-turbo
+- https://www.goatformat.com/home/goat-format-championship-15-deck-tech
+- https://www.goatformat.com/home/goat-format-championship-21-deck-tech-kapetanicus-xyz-machines
+
+Recent metagame checks:
+- Goat Grand Prix Ludwigshafen 2026 Top 16 (25 Apr 2026)
+- Goat Grand Prix Buenos Aires 2026 Top 8
+- GGP Lima 2 Top 8 (23 Jul 2026)
+- GFCEU 2026 Top 8 (25 Jul 2026)
+- GoatFormat.com current 2026 event coverage index
+
+Research standard:
+Community sources are used for metagame/deckbuilding judgement. The repository's own goat-pool.json and
+goat-limites.json remain the implementation authority for what Story Mode is actually allowed to load.

@@ -1,0 +1,22 @@
+Duelist Kingdom — GOAT Format Simulator
+Copyright (C) 2026 circlenline
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. See LICENSE for the full text.
+
+WHY AGPL: this project embeds ocgcore (the Project Ignis rules engine) and the
+Project Ignis CardScripts, both licensed under AGPL-3.0. Any distribution of
+this work, including running it as a network service, must keep the same
+licence and make the corresponding source available.
+
+Third-party components:
+- ocgcore and CardScripts — Project Ignis (EDOPro), AGPL-3.0
+- BabelCDB card database — Project Ignis
+- PeerJS (engine/vendor/peerjs.min.js) — MIT License
+
+Yu-Gi-Oh! and all card names, card text and card artwork are property of
+Konami. Card artwork is loaded from YGOPRODeck at runtime and is not
+redistributed here. This is a free, non-commercial fan project, not affiliated
+with or endorsed by Konami.

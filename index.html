@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- ══════════════════════════════════════════════════════════════════
+     LA PORTADA, QUE ES LO QUE LEE GOOGLE
+     El juego son 6 MB de wasm y un buscador no lo ejecuta: lo que se
+     indexa es esto. Texto en HTML plano, el botón de jugar arriba y el
+     trailer debajo. El banner es también la imagen que sale al pegar el
+     enlace en Discord, Reddit o WhatsApp.
+     ══════════════════════════════════════════════════════════════════ -->
+
+<title>Duelist Kingdom — Yu-Gi-Oh! GOAT Format roguelike, Bo3 tournaments and friend rooms in your browser</title>
+<meta name="description" content="Play Yu-Gi-Oh! GOAT Format (April 2005) free in your browser, on PC or phone: a Duelist Kingdom roguelike, Bo1 duels with 20 meta decks, a Swiss Bo3 tournament with side decking and top cut, and rooms to play your friends. Real 2005 rulings with the EDOPro engine.">
+<link rel="canonical" href="https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/">
+<meta name="theme-color" content="#05070d">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Duelist Kingdom · GOAT Format Simulator">
+<meta property="og:title" content="Duelist Kingdom — GOAT Format roguelike + Bo3 tournaments + friend rooms">
+<meta property="og:description" content="Yu-Gi-Oh! April 2005 in your browser, on PC or phone. Roguelike, 20 meta decks, Swiss Bo3 with side decking, and play your friends. Free, no install.">
+<meta property="og:url" content="https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/">
+<meta property="og:image" content="https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/docs/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Duelist Kingdom — GOAT Format Roguelike">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Duelist Kingdom — GOAT Format roguelike + Bo3 tournaments + friend rooms">
+<meta name="twitter:description" content="Yu-Gi-Oh! April 2005 in your browser, on PC or phone. Free, no install.">
+<meta name="twitter:image" content="https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/docs/img/og.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Duelist Kingdom — GOAT Format Simulator",
+  "alternateName": ["Duelist Kingdom Roguelike", "Goat Format Simulator"],
+  "url": "https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/",
+  "image": "https://circlenline.github.io/DUELIST_KINGDOM_ROGUELIKE/docs/img/og.jpg",
+  "description": "A free browser simulator for Yu-Gi-Oh! GOAT Format (April 2005) with real 2005 rulings: a Duelist Kingdom roguelike, Bo1 duels with 20 meta decks, a Swiss Bo3 tournament with side decking and top cut, and peer-to-peer rooms to play friends.",
+  "genre": ["Card game", "Roguelike", "Deck-building"],
+  "gamePlatform": ["Web browser", "PC", "Mobile"],
+  "applicationCategory": "Game",
+  "operatingSystem": "Any (web browser)",
+  "playMode": ["SinglePlayer", "MultiPlayer"],
+  "inLanguage": ["en", "es"],
+  "softwareVersion": "1.0",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html"
+}
+</script>
+
+<style>
+:root{ --gold:#d8b45c; --edge:rgba(120,160,220,.28); }
+*{box-sizing:border-box}
+body{margin:0;background:#05070d;color:#c3d2e8;
+  font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--gold)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 64px}
+header{text-align:center;padding:28px 0 8px}
+header img{width:100%;max-width:900px;height:auto;border-radius:4px;
+  border:1px solid rgba(216,180,92,.35);box-shadow:0 14px 50px rgba(0,0,0,.7)}
+h1{font:700 clamp(24px,4.4vw,38px)/1.15 "Times New Roman",Georgia,serif;
+  color:var(--gold);letter-spacing:.06em;margin:22px 0 6px}
+h2{font:700 clamp(19px,2.8vw,26px)/1.2 "Times New Roman",Georgia,serif;
+  color:var(--gold);letter-spacing:.05em;margin:38px 0 10px}
+h3{font-size:17px;color:#e6eefc;margin:22px 0 4px}
+.claim{font-size:clamp(16px,2.2vw,19px);color:#9fb2cd;max-width:64ch;margin:0 auto 22px}
+.jugar{display:inline-block;margin:6px 6px 4px;padding:16px 30px;border-radius:3px;
+  font:700 15px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;
+  text-decoration:none;color:#12160f;background:linear-gradient(180deg,#e6cf86,#c8a749);
+  border:1px solid #e6cf86}
+.jugar:hover{filter:brightness(1.1)}
+.jugar.sec{color:#cfe0f7;background:linear-gradient(180deg,#1d2a45,#121b2e);
+  border-color:var(--edge)}
+.nota{font-size:14px;color:#7d94b5}
+.version{font-size:13px;color:#7d94b5;letter-spacing:.12em;text-transform:uppercase}
+video{width:100%;height:auto;border-radius:4px;border:1px solid var(--edge);background:#000}
+figure{margin:18px 0}
+figure img{width:100%;height:auto;border-radius:4px;border:1px solid var(--edge)}
+figcaption{font-size:14px;color:#7d94b5;margin-top:6px}
+.modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0}
+.modo{border:1px solid var(--edge);border-radius:4px;padding:14px 16px;background:#0b1120}
+.modo b{display:block;color:var(--gold);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.modo p{margin:0;font-size:15px}
+footer{border-top:1px solid var(--edge);margin-top:44px;padding-top:18px;
+  font-size:14px;color:#7d94b5}
+ul{padding-left:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img src="docs/img/banner.jpg" width="1341" height="447"
+       alt="Duelist Kingdom — GOAT Format Roguelike">
+  <h1>Duelist Kingdom</h1>
+  <p class="claim">Yu&#8209;Gi&#8209;Oh! <strong>GOAT Format</strong> (April 2005) in your
+     browser: a <strong>roguelike</strong>, <strong>Bo3 tournaments</strong> with side
+     decking, and <strong>rooms to play your friends</strong>. Free, no install, no account.</p>
+  <p>
+    <a class="jugar" href="goat-simulador.html">▶ Play now</a>
+    <a class="jugar sec" href="deckbuilder.html">Deck builder</a>
+    <a class="jugar sec" href="DUELIST_KINGDOM_ROGUELIKE.zip">⬇ Download</a>
+  </p>
+  <p class="nota">PC and phone (landscape) · English and Spanish</p>
+  <p class="version">Build 1.0</p>
+</header>
+
+<h2 id="trailer">Trailer</h2>
+<video src="docs/trailer.mp4" poster="docs/img/trailer.jpg" controls preload="none" playsinline></video>
+
+<h2>Game modes</h2>
+<div class="modos">
+  <div class="modo"><b>Duelist Kingdom</b><p>A roguelike run across the island: Star Chips, a branching map, packs, encounters and Pegasus at the castle.</p></div>
+  <div class="modo"><b>Free Duel · Bo1</b><p>20 premade meta decks ready to play, or your own, against four bot difficulties.</p></div>
+  <div class="modo"><b>Swiss Tournament · Bo3</b><p>32 players, 5 Swiss rounds and a top 16 cut, with side decking between games.</p></div>
+  <div class="modo"><b>Play with a friend</b><p>Your own decks, Bo1 or Bo3 with side decking, each player from their own browser.</p></div>
+</div>
+
+<h2>Why it exists</h2>
+<p>To be a fun and challenging single-player game for new players and especially for
+experienced ones, and a way to play GOAT meta decks against a machine or against
+friends with everything automated: train for locals or tournament brackets without the
+manual interaction of Dueling Book.</p>
+<p>The rules aren't hand-written. It runs <strong>ocgcore</strong>, the engine EDOPro
+uses, compiled to WebAssembly and started in GOAT mode, with 2005 priority for cards
+like Black Luster Soldier, Chaos Sorcerer, Tribe-Infecting Virus and Breaker.</p>
+
+<figure>
+  <img src="docs/img/duelo.jpg" width="1500" height="672" loading="lazy"
+       alt="A GOAT Format duel: board, phase strip and card detail panel">
+  <figcaption>The duel board. Drag from hand to play; hover or tap any card to read it.</figcaption>
+</figure>
+
+<h2>A smarter AI</h2>
+<p>The bot sees only what a player would see, has a plan for each of the 20 meta decks,
+simulates its options before playing, and is guided by a bank of over 100 meta plays
+taken from real tournament replays and from misplays players reported. Found a bad
+play? The <strong>Report</strong> button in the game sends it straight to the GitHub
+page with the duel log.</p>
+
+<figure>
+  <img src="docs/img/torneo.jpg" width="900" height="838" loading="lazy"
+       alt="The Swiss tournament: your table, the round's pairings and the side deck button">
+  <figcaption>The Swiss tournament: your Bo3, side deck between games, and every table of the round.</figcaption>
+</figure>
+
+<h2>Play with a friend</h2>
+<p>Create a room and send the code or the link. Browsers connect directly to each other,
+and the host's browser runs the duel and sends each player only what they're allowed
+to see. It works from this page and from a downloaded copy, on PC or phone, and you
+can mix them. Both players need an internet connection and the same version.</p>
+
+<figure>
+  <img src="docs/img/sala.jpg" width="900" height="628" loading="lazy"
+       alt="A room with two players, deck choice, Bo3 format and time per decision">
+  <figcaption>A room: each player picks a deck, the host picks Bo1 or Bo3 and the time per decision.</figcaption>
+</figure>
+
+<h2>Your data</h2>
+<p>Your decks, runs and tournaments are saved in your own browser, on your own device.
+Nothing goes to a server. Use <strong>Options → Your data → Save backup</strong> to keep
+a copy or move it to another device.</p>
+
+<h2>Play offline</h2>
+<p><a href="DUELIST_KINGDOM_ROGUELIKE.zip">Download the zip</a>, unzip it and open
+<code>goat-simulador.html</code> by double-clicking. Everything travels inside the file
+except the card artwork, which is loaded from the internet; offline you still play.</p>
+
+<h2>Disclaimer</h2>
+<ul>
+  <li>The engine is <strong>ocgcore (EDOPro)</strong> with some custom adjustments, like
+      establishing priority with Tribe-Infecting Virus, Black Luster Soldier or Breaker.
+      There may still be rulings or plays it doesn't handle: if you see a weird AI play or an
+      interaction that goes against GOAT rulings, please send it with the
+      <strong>Report</strong> button.</li>
+  <li>The whole project was <strong>vibe coded with the help of Claude</strong>. Testing was
+      done mainly by me over several months, plus Claude simulating bot-vs-bot duels.</li>
+  <li>I don't have an <strong>iPhone</strong>: everything was tested on PC and Android. If
+      something looks or behaves wrong on iOS, please report it on the GitHub page.</li>
+</ul>
+
+<footer>
+  <p><a href="https://github.com/circlenline/DUELIST_KINGDOM_ROGUELIKE">Source on GitHub</a>
+     · <a href="https://github.com/circlenline/DUELIST_KINGDOM_ROGUELIKE/issues/new/choose">Report a bug or an AI misplay</a>
+     · Rules engine and card scripts from
+     <a href="https://github.com/ProjectIgnis">Project Ignis</a>, AGPL&#8209;3.0.</p>
+  <p>Yu-Gi-Oh! and all card names, artwork and text are property of Konami. This is a
+     free, non-commercial fan project, not affiliated with or endorsed by Konami.</p>
+</footer>
+
+</div>
+
+<!-- ══ EL CONTADOR DE VISITAS ══
+     GoatCounter: sin cookies, sin datos personales, sin banner de
+     consentimiento. Se activa poniendo el código de sitio en la línea
+     de abajo (y el mismo código en engine/browser/src/telemetria.js
+     para los eventos de dentro del juego). Sin código, no carga nada.
+<script data-goatcounter="https://TUCODIGO.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+-->
+</body>
+</html>
